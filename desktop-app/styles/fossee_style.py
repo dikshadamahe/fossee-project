@@ -503,6 +503,68 @@ QStatusBar::item {
 }
 
 /* --------------------------------------------------------------------------
+   MESSAGE BOX
+   -------------------------------------------------------------------------- */
+
+QMessageBox {
+    background-color: #FFFFFF;
+}
+
+QMessageBox QLabel {
+    color: #102A43;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+QMessageBox QPushButton {
+    background-color: #1B7F79;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 32px;
+    min-width: 80px;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #156B66;
+}
+
+QDialogButtonBox QPushButton {
+    background-color: #1B7F79;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 32px;
+    min-width: 80px;
+}
+
+QDialogButtonBox QPushButton:hover {
+    background-color: #156B66;
+}
+
+QDialog QPushButton {
+    background-color: #1B7F79;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 32px;
+    min-width: 80px;
+}
+
+QDialog QPushButton:hover {
+    background-color: #156B66;
+}
+
+/* --------------------------------------------------------------------------
    TOOLTIPS
    -------------------------------------------------------------------------- */
 

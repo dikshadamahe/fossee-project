@@ -11,8 +11,9 @@ Features:
 
 from PyQt5.QtWidgets import (
     QFrame, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QListWidget, QListWidgetItem, QWidget, QMessageBox
+    QListWidget, QListWidgetItem, QWidget
 )
+from widgets.message_dialog import ask_yes_no
 from PyQt5.QtCore import Qt, pyqtSignal, QSize
 from PyQt5.QtGui import QFont, QIcon
 from datetime import datetime
@@ -302,15 +303,13 @@ class HistoryPanel(QFrame):
         dataset = next((d for d in self._datasets if d['id'] == dataset_id), None)
         
         if dataset:
-            reply = QMessageBox.question(
+            confirmed = ask_yes_no(
                 self,
                 "Confirm Delete",
-                f"Delete '{dataset['filename']}' from history?",
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No
+                f"Delete '{dataset['filename']}' from history?"
             )
             
-            if reply == QMessageBox.Yes:
+            if confirmed:
                 self._datasets = [d for d in self._datasets if d['id'] != dataset_id]
                 self._refresh_list()
                 self.dataset_deleted.emit(dataset['filename'])
@@ -320,15 +319,13 @@ class HistoryPanel(QFrame):
         if not self._datasets:
             return
         
-        reply = QMessageBox.question(
+        confirmed = ask_yes_no(
             self,
             "Clear History",
-            f"Delete all {len(self._datasets)} datasets from history?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            f"Delete all {len(self._datasets)} datasets from history?"
         )
         
-        if reply == QMessageBox.Yes:
+        if confirmed:
             self._datasets = []
             self._refresh_list()
     

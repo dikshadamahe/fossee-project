@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QLineEdit, 
-    QPushButton, QFrame, QMessageBox
+    QPushButton, QFrame
 )
 from PyQt5.QtCore import Qt, pyqtSignal
+from widgets.message_dialog import show_warning, show_info
 
 # FOSSEE Colors
 COLORS = {
@@ -165,14 +166,14 @@ class LoginPage(AuthPage):
         password = self.password_input.text()
         
         if not username or not password:
-            QMessageBox.warning(self, "Error", "Please fill in all fields")
+            show_warning(self, "Error", "Please fill in all fields")
             return
             
         result = self.api_client.login(username, password)
         if result.success:
             self.login_success.emit(result.data)
         else:
-            QMessageBox.warning(self, "Login Failed", result.error or "Invalid credentials")
+            show_warning(self, "Login Failed", result.error or "Invalid credentials")
 
 
 class RegisterPage(AuthPage):
@@ -200,16 +201,16 @@ class RegisterPage(AuthPage):
         confirm = self.confirm_input.text()
         
         if not all([username, email, password, confirm]):
-            QMessageBox.warning(self, "Error", "Please fill in all fields")
+            show_warning(self, "Error", "Please fill in all fields")
             return
             
         if password != confirm:
-            QMessageBox.warning(self, "Error", "Passwords do not match")
+            show_warning(self, "Error", "Passwords do not match")
             return
             
         result = self.api_client.register(username, email, password, confirm)
         if result.success:
-            QMessageBox.information(self, "Success", "Registration successful! Please login.")
+            show_info(self, "Success", "Registration successful! Please login.")
             self.register_success.emit()
         else:
-            QMessageBox.warning(self, "Registration Failed", result.error or "Registration failed")
+            show_warning(self, "Registration Failed", result.error or "Registration failed")

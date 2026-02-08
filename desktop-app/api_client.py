@@ -20,7 +20,7 @@ from io import BytesIO
 
 class Config:
     """API Configuration - centralized settings"""
-    BASE_URL = "http://localhost:8000"
+    BASE_URL = "https://dikshadamahe.pythonanywhere.com"
     API_PREFIX = "/api"
     TIMEOUT = 30  # seconds
 
@@ -331,7 +331,7 @@ class APIClient:
 _client: Optional[APIClient] = None
 
 
-def get_client(base_url: str = "http://localhost:8000") -> APIClient:
+def get_client(base_url: str = "https://dikshadamahe.pythonanywhere.com") -> APIClient:
     """Get or create API client singleton"""
     global _client
     if _client is None:

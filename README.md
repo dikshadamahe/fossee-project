@@ -18,7 +18,7 @@ A hybrid application that allows users to upload CSV files containing chemical e
 |----------|------|
 | **Web App** | [https://fossee-project-eta.vercel.app](https://fossee-project-eta.vercel.app) |
 | **Backend API** | [https://dikshadamahe.pythonanywhere.com/api/](https://dikshadamahe.pythonanywhere.com/api/) |
-| **Desktop App** | [Download Windows Installer](https://github.com/dikshadamahe/fossee-project/releases/latest) |
+| **Desktop App** | [Download Windows EXE](https://github.com/dikshadamahe/fossee-project/releases/latest) |
 
 **Quick Start:**
 1. Visit the [Web App](https://fossee-project-eta.vercel.app).
@@ -117,7 +117,17 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### 5. Test with Sample Data
+The desktop app connects to the hosted backend at `https://dikshadamahe.pythonanywhere.com/api/` by default. No local backend setup is required.
+
+### 5. Build Desktop EXE
+```bash
+cd desktop-app
+pip install pyinstaller
+pyinstaller --clean FOSSEE_Visualizer.spec
+```
+The standalone `.exe` will be generated in `desktop-app/dist/FOSSEE_Visualizer.exe`.
+
+### 6. Test with Sample Data
 
 Upload the included `sample_equipment_data.csv` from the repo root.
 
@@ -144,8 +154,13 @@ fossee-project/
 │   └── package.json
 │
 └── desktop-app/                # PyQt5 Application
+    ├── main.py                 # Application entry point
+    ├── api_client.py           # REST API client
+    ├── FOSSEE_Visualizer.spec  # PyInstaller build config
+    ├── assets/                 # Icons and images
     ├── pages/                  # UI screens
     ├── widgets/                # Reusable components
+    ├── styles/                 # FOSSEE design system
     └── requirements.txt
 ```
 
@@ -188,7 +203,7 @@ The `sample_equipment_data.csv` contains 25 records:
 |-----------|----------|-----|
 | Web Frontend | Vercel | [https://fossee-project-eta.vercel.app](https://fossee-project-eta.vercel.app) |
 | Backend API | PythonAnywhere | [https://dikshadamahe.pythonanywhere.com/api/](https://dikshadamahe.pythonanywhere.com/api/) |
-| Desktop App | GitHub Releases | [Download Windows Installer](https://github.com/dikshadamahe/fossee-project/releases/latest) |
+| Desktop App | GitHub Releases | [Download Windows EXE](https://github.com/dikshadamahe/fossee-project/releases/latest) |
 
 ---
 

@@ -12,15 +12,40 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QStackedWidget, QPushButton, QLabel, QFrame, QStatusBar,
-    QMessageBox, QFileDialog
+    QFileDialog
 )
+from widgets.message_dialog import show_warning, show_info
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon, QPixmap
+from PyQt5.QtSvg import QSvgRenderer
+from PyQt5.QtCore import QSize as _QSize
+import os
 
 from styles.fossee_style import get_stylesheet, COLORS
 from api_client import get_client, APIClient
 from pages import UploadPage, DashboardPage, HistoryPage
 from pages.auth_page import LoginPage, RegisterPage
+
+
+def _get_icon_path():
+    """Get path to favicon.svg, works for both dev and PyInstaller bundle"""
+    if getattr(sys, '_MEIPASS', None):
+        return os.path.join(sys._MEIPASS, 'assets', 'favicon.svg')
+    return os.path.join(os.path.dirname(__file__), 'assets', 'favicon.svg')
+
+
+def _svg_to_icon(svg_path, size=64):
+    """Convert SVG file to QIcon via QSvgRenderer"""
+    from PyQt5.QtGui import QPainter, QImage
+    from PyQt5.QtCore import QRectF
+    renderer = QSvgRenderer(svg_path)
+    image = QImage(size, size, QImage.Format_ARGB32)
+    image.fill(0)
+    painter = QPainter(image)
+    renderer.render(painter, QRectF(0, 0, size, size))
+    painter.end()
+    pixmap = QPixmap.fromImage(image)
+    return QIcon(pixmap)
 
 
 class NavButton(QPushButton):
@@ -95,14 +120,24 @@ class Header(QFrame):
         layout.setSpacing(16)
         
         # Logo
-        logo = QLabel("CEV")
-        logo.setStyleSheet(f"""
-            background-color: {COLORS['primary-700']};
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
+        icon_path = _get_icon_path()
+        logo = QLabel()
+        if os.path.exists(icon_path):
+            from PyQt5.QtSvg import QSvgRenderer
+            from PyQt5.QtGui import QPainter, QImage
+            from PyQt5.QtCore import QRectF
+            renderer = QSvgRenderer(icon_path)
+            image = QImage(40, 40, QImage.Format_ARGB32)
+            image.fill(0)
+            painter = QPainter(image)
+            renderer.render(painter, QRectF(0, 0, 40, 40))
+            painter.end()
+            logo.setPixmap(QPixmap.fromImage(image))
+        else:
+            logo.setText("CEV")
+        logo.setStyleSheet("""
+            background: transparent;
+            border: none;
         """)
         logo.setFixedSize(40, 40)
         logo.setAlignment(Qt.AlignCenter)
@@ -194,12 +229,11 @@ class MainWindow(QMainWindow):
         
         # Check API connection
         if not self.api_client.check_connection():
-            QMessageBox.warning(
+            show_warning(
                 self,
                 "Connection Warning",
-                "Cannot connect to Django backend at localhost:8000.\n"
-                "Please ensure the server is running:\n\n"
-                "  cd backend && python manage.py runserver"
+                "Cannot connect to Django backend.\n"
+                "Please check your internet connection."
             )
     
     def _setup_ui(self):
@@ -318,10 +352,10 @@ class MainWindow(QMainWindow):
             
             if result.success:
                 self.statusbar.showMessage(f"Report saved: {filepath}")
-                QMessageBox.information(self, "Success", f"Report saved to:\n{filepath}")
+                show_info(self, "Success", f"Report saved to:\n{filepath}")
             else:
                 self.statusbar.showMessage("Report generation failed")
-                QMessageBox.warning(self, "Error", f"Failed to generate report:\n{result.error}")
+                show_warning(self, "Error", f"Failed to generate report:\n{result.error}")
 
     def _handle_login_success(self, user_data):
         """Handle successful login"""
@@ -359,11 +393,16 @@ def main():
     font = QFont("Segoe UI", 10)
     app.setFont(font)
     
+    # Set app icon
+    icon_path = _get_icon_path()
+    if os.path.exists(icon_path):
+        app.setWindowIcon(_svg_to_icon(icon_path, 64))
+    
     # Apply FOSSEE stylesheet
     app.setStyleSheet(get_stylesheet())
     
     # Create API client
-    api_client = get_client("http://localhost:8000")
+    api_client = get_client("https://dikshadamahe.pythonanywhere.com")
     
     # Create and show main window
     window = MainWindow(api_client)
