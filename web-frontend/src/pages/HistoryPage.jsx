@@ -26,7 +26,12 @@ export default function HistoryPage() {
       setDatasets(data);
       setError(null);
     } catch (err) {
-      setError('Failed to load datasets');
+      // Check if it's a 401 authentication error
+      if (err.response?.status === 401) {
+        setError('login-required');
+      } else {
+        setError('Failed to load datasets');
+      }
     } finally {
       setLoading(false);
     }
@@ -93,13 +98,31 @@ export default function HistoryPage() {
         </Link>
       </div>
 
-      {error && (
+      {/* Login Required Message */}
+      {error === 'login-required' && (
+        <div className="lab-panel text-center py-16">
+          <div className="w-16 h-16 mx-auto bg-warning/10 text-warning rounded-full flex items-center justify-center mb-4">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="font-serif text-xl font-semibold text-text-primary mb-2">Login Required</h2>
+          <p className="text-text-secondary mb-6">
+            Please log in to view your upload history. Your datasets are synced across web and desktop.
+          </p>
+          <p className="text-text-muted text-sm">
+            Use the Login button in the top right corner to access your account.
+          </p>
+        </div>
+      )}
+
+      {error && error !== 'login-required' && (
         <div className="p-4 bg-error/10 border border-error/20 rounded-lg text-error mb-6">
           {error}
         </div>
       )}
 
-      {datasets.length === 0 ? (
+      {error !== 'login-required' && datasets.length === 0 && !error && (
         <div className="lab-panel text-center py-16">
           <div className="w-16 h-16 mx-auto bg-primary-700/10 text-primary-700 rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +137,9 @@ export default function HistoryPage() {
             Upload Your First Dataset
           </Link>
         </div>
-      ) : (
+      )}
+
+      {error !== 'login-required' && datasets.length > 0 && (
         <div className="lab-panel p-0 overflow-hidden">
           <table className="data-table">
             <thead>
