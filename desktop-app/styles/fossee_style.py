@@ -124,6 +124,15 @@ QPushButton:disabled {
     color: #E2E8F0;
 }
 
+QPushButton:focus {
+    outline: none;
+    border: none;
+}
+
+*:focus {
+    outline: none;
+}
+
 /* Secondary Button */
 QPushButton#SecondaryButton {
     background-color: transparent;

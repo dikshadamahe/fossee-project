@@ -87,6 +87,7 @@ class APIClient:
         self.base_url = (base_url or Config.BASE_URL).rstrip('/')
         self.session = requests.Session()
         self.timeout = Config.TIMEOUT
+        self.token = None  # Auth token - set after login
     
     def _url(self, endpoint: str) -> str:
         """Build full URL from endpoint"""
@@ -240,6 +241,61 @@ class APIClient:
         except Exception as e:
             return APIResponse(success=False, error=str(e))
     
+    # =====================================================================
+    # AUTHENTICATION
+    # =====================================================================
+
+    def login(self, username, password):
+        """Login user and store token"""
+        try:
+            response = self.session.post(
+                self._url("/auth/login/"),
+                json={"username": username, "password": password},
+                timeout=self.timeout
+            )
+            result = self._handle_response(response)
+            if result.success:
+                self.token = result.data.get("token")
+                self.session.headers.update({"Authorization": f"Token {self.token}"})
+            return result
+        except Exception as e:
+            return APIResponse(success=False, error=str(e))
+
+    def register(self, username, email, password, confirm_password):
+        """Register new user"""
+        try:
+            response = self.session.post(
+                self._url("/auth/register/"),
+                json={
+                    "username": username,
+                    "email": email,
+                    "password": password,
+                    "confirm_password": confirm_password
+                },
+                timeout=self.timeout
+            )
+            return self._handle_response(response)
+        except Exception as e:
+            return APIResponse(success=False, error=str(e))
+
+    def logout(self):
+        """Logout user"""
+        try:
+            self.session.post(self._url("/auth/logout/"))
+        except:
+            pass
+        self.token = None
+        self.session.headers.pop("Authorization", None)
+        return APIResponse(success=True)
+
+    def get_user(self):
+        """Get current user details"""
+        try:
+            response = self.session.get(self._url("/auth/user/"))
+            return self._handle_response(response)
+        except Exception as e:
+            return APIResponse(success=False, error=str(e))
+
     # =====================================================================
     # HELPERS
     # =====================================================================

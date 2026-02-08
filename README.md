@@ -1,426 +1,287 @@
-# Chemical Equipment Parameter Visualizer
+# CHEM•VIZ — Chemical Equipment Parameter Visualizer
 
-<p align="center">
-  <img src="screenshots/logo.png" alt="FOSSEE Scientific Analytics" width="200"/>
-</p>
+**Hybrid Web + Desktop Application** | FOSSEE Intern Screening Task
 
-> **FOSSEE Scientific Analytics Platform** — A full-stack application for analyzing and visualizing chemical equipment parameters from CSV data.
+A hybrid application that allows users to upload a CSV file containing chemical equipment parameters (Equipment Name, Type, Flowrate, Pressure, Temperature), parses and analyzes the data via a Django REST backend, and displays data tables, charts, and summaries on both a **React Web frontend** and a **PyQt5 Desktop frontend**.
 
-[![Python](https://img.shields.io/badge/Python-3.12.0-3776AB?logo=python&logoColor=white)](https://python.org)
-[![Django](https://img.shields.io/badge/Django-5.1.4-092E20?logo=django)](https://djangoproject.com)
-[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)](https://react.dev)
-[![PyQt5](https://img.shields.io/badge/PyQt5-5.15-41CD52?logo=qt)](https://riverbankcomputing.com/software/pyqt/)
-
----
-
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-  - [Backend Setup (Django)](#1-backend-setup-django)
-  - [Web Frontend Setup (React)](#2-web-frontend-setup-react)
-  - [Desktop App Setup (PyQt5)](#3-desktop-app-setup-pyqt5)
-- [Quick Start](#-quick-start)
-- [Demo CSV Format](#-demo-csv-format)
-- [API Endpoints](#-api-endpoints)
-- [Screenshots](#-screenshots)
-- [Project Structure](#-project-structure)
-- [Design System](#-design-system)
-- [License](#-license)
+![FOSSEE](https://img.shields.io/badge/FOSSEE-IIT%20Bombay-blue)
+![Django](https://img.shields.io/badge/Django-5.0+-092E20)
+![React](https://img.shields.io/badge/React-18.x-61dafb)
+![PyQt5](https://img.shields.io/badge/PyQt5-5.15+-41cd52)
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57)
 
 ---
 
-## ✨ Features
+## Live Demo & Downloads
 
-| Feature | Web | Desktop |
-|---------|:---:|:-------:|
-| CSV Upload (drag & drop) | ✅ | ✅ |
-| Column Auto-Detection | ✅ | ✅ |
-| Statistical Summary | ✅ | ✅ |
-| Type Distribution Chart | ✅ | ✅ |
-| Parameter Line Charts | ✅ | ✅ |
-| Dataset History | ✅ | ✅ |
-| PDF Report Download | ✅ | ✅ |
-| Plain English Insights | ✅ | ✅ |
+| Platform | Link |
+|----------|------|
+| **Web App** | [https://fossee-web.vercel.app](https://fossee-web.vercel.app) |
+| **Backend API** | [https://pracheer.pythonanywhere.com/api/](https://pracheer.pythonanywhere.com/api/) |
+| **Desktop App** | [Download ChemViz.exe (Windows)](https://github.com/pracheersrivastava/fossee-web/releases/latest) |
+
+> **Quick Start:** Visit the web app, register an account, upload `sample_equipment_data.csv`, and explore the charts, summaries, and PDF export.
 
 ---
 
-## 🏗 Architecture
+## Tech Stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend (Web) | React.js + Chart.js | Data table + chart visualization |
+| Frontend (Desktop) | PyQt5 + Matplotlib | Same visualization in desktop |
+| Backend | Python Django + Django REST Framework | Common backend API |
+| Data Handling | Pandas | Reading CSV & analytics |
+| Database | SQLite | Store last 5 uploaded datasets |
+| PDF Generation | jsPDF (Web) + ReportLab (Desktop) | Export analysis reports |
+| Authentication | Token-based (DRF Tokens) | Login, Register, Logout |
+| Version Control | Git & GitHub | Collaboration & submission |
+| Sample Data | `sample_equipment_data.csv` | Provided for testing & demo |
+
+---
+
+## Features Implemented
+
+| # | Feature | Web | Desktop | Details |
+|---|---------|-----|---------|---------|
+| 1 | **CSV Upload** | Yes | Yes | Drag-and-drop + file dialog upload to Django backend |
+| 2 | **Data Summary API** | Yes | Yes | Total count, averages (flowrate, temperature, pressure), equipment type distribution |
+| 3 | **Visualization** | Yes (Chart.js) | Yes (Matplotlib) | Equipment Distribution (Bar), Temperature Profile (Line), Pressure Analysis (Bar) |
+| 4 | **History Management** | Yes | Yes | Stores last 5 uploaded datasets with summary; sidebar + full history screen |
+| 5 | **PDF Report** | Yes (jsPDF) | Yes (ReportLab) | A4 formatted report with KPIs, charts, data table, FOSSEE branding |
+| 6 | **Authentication** | Yes | Yes | Token-based login/register/logout with dataset ownership |
+| 7 | **Data Tables** | Yes | Yes | Sortable equipment table with status badges, zebra striping |
+| 8 | **Sample CSV** | Yes | Yes | `sample_equipment_data.csv` included in repo root (25 records, 7 equipment types) |
+
+---
+
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FOSSEE Platform                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐    HTTP/REST    ┌──────────────────────────┐ │
-│  │ React 18     │◄───────────────►│  Django 5 + DRF          │ │
-│  │ + Chart.js   │    :5173→:8000  │  SQLite / PostgreSQL     │ │
-│  │ + Tailwind   │                 │                          │ │
-│  └──────────────┘                 └──────────────────────────┘ │
-│                                              ▲                  │
-│  ┌──────────────┐    HTTP/REST               │                  │
-│  │ PyQt5        │◄───────────────────────────┘                  │
-│  │ + Matplotlib │    :8000                                      │
-│  └──────────────┘                                               │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────┐     HTTP/REST     ┌──────────────────┐
+│   React Web App  │ ◄───────────────► │  Django Backend   │
+│   (Vercel)       │                   │  (PythonAnywhere)  │
+└──────────────────┘                   │  SQLite + Pandas  │
+                                       └──────────────────┘
+┌──────────────────┐     HTTP/REST            ▲
+│  PyQt5 Desktop   │ ◄───────────────────────►│
+│   (.exe release) │
+└──────────────────┘
 ```
+
+Both frontends connect to the **same Django backend API**.
 
 ---
 
-## 📦 Prerequisites
+## Setup Instructions
 
-### Required Software
+### Prerequisites
 
-| Software | Version | Download |
-|----------|---------|----------|
-| **Python** | 3.12.0 | [python.org/downloads](https://www.python.org/downloads/release/python-3120/) |
-| **Node.js** | 18+ | [nodejs.org](https://nodejs.org/) |
-| **npm** | 9+ | Included with Node.js |
-| **Git** | Latest | [git-scm.com](https://git-scm.com/) |
+| Tool | Version |
+|------|---------|
+| Python | 3.12+ |
+| Node.js | 18+ |
+| npm | 9+ |
+| Git | 2.x |
 
-### Verify Installation
+### 1. Clone the Repository
 
 ```bash
-# Check Python version (must be 3.12.x)
-python3.12 --version
-# Output: Python 3.12.0
-
-# Check Node.js version
-node --version
-# Output: v18.x.x or higher
-
-# Check npm version
-npm --version
-# Output: 9.x.x or higher
+git clone https://github.com/pracheersrivastava/fossee-web.git
+cd fossee-web
 ```
 
-### macOS (Homebrew)
+### 2. Start the Backend (required first)
 
 ```bash
-# Install Python 3.12
-brew install python@3.12
-
-# Install Node.js
-brew install node
-```
-
-### Ubuntu/Debian
-
-```bash
-# Install Python 3.12
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install python3.12 python3.12-venv python3.12-dev
-
-# Install Node.js 18+
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-### Windows
-
-1. Download Python 3.12.0 from [python.org](https://www.python.org/downloads/release/python-3120/)
-2. Check "Add Python to PATH" during installation
-3. Download Node.js LTS from [nodejs.org](https://nodejs.org/)
-
----
-
-## 🚀 Installation
-
-### 1. Backend Setup (Django)
-
-```bash
-# Navigate to backend directory
 cd backend
+python -m venv venv
 
-# Create virtual environment with Python 3.12
-python3.12 -m venv venv
-
-# Activate virtual environment
-# macOS/Linux:
-source venv/bin/activate
-# Windows:
+# Windows
 venv\Scripts\activate
+# Linux / Mac
+source venv/bin/activate
 
-# Install Python dependencies
 pip install -r requirements.txt
-
-# Run database migrations
 python manage.py migrate
-
-# Start Django server
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver 8000
 ```
 
-**Backend will be available at:** `http://localhost:8000`
+API is now live at **http://localhost:8000/api/**
 
-### 2. Web Frontend Setup (React)
+> **Optional:** Create a superuser for the Django admin panel:
+> ```bash
+> python manage.py createsuperuser
+> ```
+> Then visit http://localhost:8000/admin/
+
+### 3a. Start the Web Frontend (React)
 
 ```bash
-# Open a new terminal
+# From the project root (not backend/)
 cd web-frontend
-
-# Install npm dependencies
 npm install
-
-# Start Vite development server
 npm run dev
 ```
 
-**Web app will be available at:** `http://localhost:5173`
+Open **http://localhost:5173**
 
-### 3. Desktop App Setup (PyQt5)
+### 3b. Run the Desktop Application (PyQt5)
 
 ```bash
-# Open a new terminal
 cd desktop-app
+python -m venv venv
 
-# Create virtual environment with Python 3.12
-python3.12 -m venv venv
-
-# Activate virtual environment
-# macOS/Linux:
-source venv/bin/activate
-# Windows:
+# Windows
 venv\Scripts\activate
+# Linux / Mac
+source venv/bin/activate
 
-# Install Python dependencies
 pip install -r requirements.txt
-
-# Launch desktop application
 python main.py
 ```
 
+### 4. Test with Sample Data
+
+Upload the included `sample_equipment_data.csv` from the repo root through either the Web or Desktop interface to see charts, KPIs, and data tables.
+
 ---
 
-## ⚡ Quick Start
+## Project Structure
 
-Use the provided shell scripts for one-command startup:
-
-```bash
-# Terminal 1 - Start Backend (required first)
-./run_backend.sh
-
-# Terminal 2 - Start Web Frontend
-./run_web.sh
-
-# Terminal 3 - Start Desktop App
-./run_desktop.sh
+```
+fossee-web/
+├── README.md                        # This file
+├── sample_equipment_data.csv        # Sample CSV for testing & demo
+├── package.json                     # Root project config
+│
+├── backend/                         # Django REST API Backend
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── db.sqlite3                   # SQLite database
+│   ├── config/                      # Django project config
+│   │   ├── settings.py              # DB, CORS, REST, auth settings
+│   │   ├── urls.py                  # Root URL routing
+│   │   └── wsgi.py                  # WSGI entry point
+│   ├── api/                         # Main API application
+│   │   ├── models.py                # Dataset model (CSV metadata + storage)
+│   │   ├── serializers.py           # DRF serializers
+│   │   ├── views.py                 # Upload, list, summary, analysis endpoints
+│   │   ├── auth_views.py            # Login, register, logout endpoints
+│   │   ├── authentication.py        # Lenient token auth (anonymous fallback)
+│   │   ├── services.py              # Pandas analytics engine
+│   │   └── urls.py
+│   └── media/                       # Uploaded files storage
+│
+├── web-frontend/                    # React Web Frontend
+│   ├── index.html                   # Web entry point
+│   ├── vite.config.js               # Vite configuration
+│   ├── package.json                 # React dependencies
+│   └── src/
+│       ├── App.jsx                  # Main app with routing
+│       ├── main.jsx                 # Entry point
+│       ├── styles/
+│       │   └── index.css            # Global base styles & tokens
+│       ├── api/
+│       │   └── client.js            # API client (Axios wrapper)
+│       ├── context/
+│       │   └── AuthContext.jsx      # Auth state management
+│       ├── components/
+│       │   ├── Layout.jsx           # Header, Sidebar, MainContent
+│       │   ├── AuthModal.jsx        # Login/Register modal
+│       │   ├── ChartCard.jsx        # Chart.js visualization wrapper
+│       │   └── DataTable.jsx        # Equipment data table
+│       └── pages/
+│           ├── UploadPage.jsx       # File upload with drag-and-drop
+│           ├── DashboardPage.jsx    # Analytics dashboard
+│           └── HistoryPage.jsx      # Dataset history list
+│
+└── desktop-app/                     # PyQt5 Desktop Frontend
+    ├── main.py                      # Application entry point
+    ├── requirements.txt
+    ├── api_client.py                # HTTP client for Django API
+    ├── assets/                      # Icons and images
+    ├── pages/
+    │   ├── auth_page.py             # Login/Register screens
+    │   ├── upload_page.py           # CSV upload screen
+    │   ├── dashboard_page.py        # Analytics dashboard
+    │   └── history_page.py          # History list screen
+    ├── widgets/
+    │   ├── sidebar.py               # Navigation sidebar
+    │   └── pdf_report_dialog.py     # PDF generation dialog
+    └── styles/
+        └── fossee_style.py          # QSS stylesheet & theme
 ```
 
 ---
 
-## 📊 Demo CSV Format
+## API Endpoints
 
-A demo file `sample_data.csv` is included. Format:
+Base URL: **https://pracheer.pythonanywhere.com/api/** (hosted) or **http://localhost:8000/api/** (local)
 
-```csv
-timestamp,equipment_type,flow_rate,pressure,temperature
-2026-01-01 08:00:00,Pump,45.2,120.5,65.3
-2026-01-01 08:15:00,Pump,46.8,121.2,66.1
-2026-01-01 08:30:00,Valve,12.3,85.4,72.8
-2026-01-01 08:45:00,Reactor,78.9,200.1,180.5
-```
-
-### Column Specifications
-
-| Column | Type | Description | Unit |
-|--------|------|-------------|------|
-| `timestamp` | datetime | ISO 8601 format | - |
-| `equipment_type` | string | Equipment category | - |
-| `flow_rate` | float | Flow measurement | L/min |
-| `pressure` | float | Pressure reading | kPa |
-| `temperature` | float | Temperature reading | °C |
-
-### Supported Equipment Types
-
-- Pump
-- Valve
-- Reactor
-- Heat Exchanger
-- Compressor
-- Tank
-- Filter
-- Separator
-
----
-
-## 🔌 API Endpoints
+### Datasets
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/upload/` | Upload CSV file |
-| `GET` | `/api/datasets/` | List all datasets |
-| `GET` | `/api/datasets/{id}/` | Get dataset details |
-| `DELETE` | `/api/datasets/{id}/` | Delete dataset |
-| `GET` | `/api/summary/{id}/` | Get statistical summary |
-| `GET` | `/api/report/{id}/` | Download PDF report |
+| POST | `/api/datasets/upload/` | Upload a CSV file |
+| GET | `/api/datasets/` | List datasets (last 5) |
+| GET | `/api/datasets/{id}/` | Get dataset details |
+| DELETE | `/api/datasets/{id}/` | Delete a dataset |
 
-See [API_SPEC.yaml](API_SPEC.yaml) for full API documentation.
+### Analytics
 
----
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/summary/{id}/` | Summary stats (total count, averages, type distribution) |
+| GET | `/api/analysis/{id}/` | Chart data (equipment distribution, temperature, pressure) |
+| GET | `/api/history/` | Dataset upload history (last 5) |
 
-## 📸 Screenshots
+### Authentication
 
-### Web Application
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register/` | Create new account |
+| POST | `/api/auth/login/` | Login → returns auth token |
+| POST | `/api/auth/logout/` | Logout → invalidates token |
+| GET | `/api/auth/user/` | Get current user info |
 
-#### Upload Page
-![Upload Page](screenshots/web-upload.png)
-*Drag & drop CSV upload with column auto-detection*
-
-#### Dashboard
-![Dashboard](screenshots/web-dashboard.png)
-*Statistical summary with interactive Chart.js visualizations*
-
-#### History Page
-![History](screenshots/web-history.png)
-*Browse and manage uploaded datasets*
+Full API documentation: [backend/README.md](backend/README.md)
 
 ---
 
-### Desktop Application
+## Sample Data
 
-#### Upload View
-![Desktop Upload](screenshots/desktop-upload.png)
-*PyQt5 upload interface with progress indicator*
+The repository includes `sample_equipment_data.csv` with 25 records across 7 equipment types:
 
-#### Dashboard View
-![Desktop Dashboard](screenshots/desktop-dashboard.png)
-*Matplotlib charts with FOSSEE color palette*
-
-#### History Panel
-![Desktop History](screenshots/desktop-history.png)
-*Dataset management with view/delete actions*
+| Column | Description | Example Values |
+|--------|-------------|----------------|
+| Equipment Name | Unique equipment identifier | Heat Exchanger A1, Reactor C2 |
+| Type | Equipment category | Heat Exchanger, Reactor, Pump, Compressor, Distillation Column, Boiler, Condenser, Storage Tank |
+| Flowrate | Flow rate value | 0.0 – 420.0 |
+| Pressure | Operating pressure | 1.0 – 10.5 |
+| Temperature | Operating temperature | 25.0 – 260.0 |
 
 ---
 
-## 📁 Project Structure
+## Licenses & Credits
 
-```
-fossee-project/
-├── backend/                    # Django REST API
-│   ├── api/
-│   │   ├── models.py          # Dataset model
-│   │   ├── views.py           # API views
-│   │   ├── services/
-│   │   │   ├── csv_parser.py  # CSV parsing logic
-│   │   │   ├── analytics.py   # Statistical analysis
-│   │   │   └── pdf_generator.py
-│   │   └── urls.py
-│   ├── config/                # Django settings
-│   ├── manage.py
-│   └── requirements.txt
-│
-├── web-frontend/              # React + Vite
-│   ├── src/
-│   │   ├── api/
-│   │   │   └── client.js      # Axios API client
-│   │   ├── components/
-│   │   │   ├── Layout.jsx
-│   │   │   ├── CSVUploadZone.jsx
-│   │   │   └── Charts/
-│   │   ├── pages/
-│   │   │   ├── Upload.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   └── History.jsx
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── package.json
-│   └── tailwind.config.js
-│
-├── desktop-app/               # PyQt5 Application
-│   ├── widgets/
-│   │   ├── upload_widget.py
-│   │   ├── table_widget.py
-│   │   ├── chart_widget.py
-│   │   └── history_panel.py
-│   ├── pages/
-│   │   ├── upload_page.py
-│   │   ├── dashboard_page.py
-│   │   └── history_page.py
-│   ├── api_client.py          # Requests API client
-│   ├── fossee_style.py        # FOSSEE colors
-│   ├── main.py
-│   └── requirements.txt
-│
-├── screenshots/               # Screenshot placeholders
-├── sample_data.csv            # Demo CSV file
-├── API_SPEC.yaml              # API specification
-├── design.md                  # FOSSEE design system
-├── run_backend.sh             # Backend startup script
-├── run_web.sh                 # Web frontend script
-├── run_desktop.sh             # Desktop app script
-└── README.md                  # This file
-│   │   └── styles/
-│   └── package.json
-├── desktop/                # PyQt5 application
-│   ├── main.py
-│   ├── styles/
-│   └── components/
-├── sample_data/            # Sample CSV files
-├── requirements.txt        # Python dependencies
-└── README.md
-```
+**FOSSEE Project, IIT Bombay**
 
-## Quick Start
+Built as part of the [FOSSEE](https://fossee.in/) initiative at the Indian Institute of Technology Bombay.
 
 ---
 
-## 🎨 Design System
+## Deployment Status
 
-Following the **FOSSEE Scientific Analytics UI** design system:
+### Web Frontend — Vercel
+- Auto-deploys from `main` branch.
+- Live at [https://fossee-web.vercel.app](https://fossee-web.vercel.app).
 
-### Color Palette
+### Backend — PythonAnywhere
+- Django app hosted at [https://pracheer.pythonanywhere.com](https://pracheer.pythonanywhere.com).
+- CORS configured to accept requests from Vercel and Desktop.
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Primary 900 | `#0F2A44` | Headers, text |
-| Primary 700 | `#1B7F79` | Flow rate, accents |
-| Primary 600 | `#3A4E9F` | Pressure, buttons |
-| Temperature | `#C53030` | Temperature data |
-| Success | `#38A169` | Success states |
-| Warning | `#D69E2E` | Warnings |
-| Surface | `#F7FAFC` | Backgrounds |
-
-### Typography
-
-- **Headings:** Inter, 600-700 weight
-- **Body:** Inter, 400-500 weight
-- **Monospace:** JetBrains Mono (data tables)
-
----
-
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-source venv/bin/activate
-python manage.py test
-
-# Frontend tests
-cd web-frontend
-npm test
-```
-
----
-
-## 📝 License
-
-This project is developed for **FOSSEE (Free/Libre and Open Source Software for Education)** at IIT Bombay.
-
----
-
-## 👤 Author
-
-**Diksha Damahe**
-
----
-
-<p align="center">
-  <strong>FOSSEE Scientific Analytics Platform</strong><br>
-  Built with ❤️ for scientific research
-</p>
+### Desktop — GitHub Releases
+- Built with **PyInstaller**.
+- Download latest `.exe` from [Releases](https://github.com/pracheersrivastava/fossee-web/releases/latest).

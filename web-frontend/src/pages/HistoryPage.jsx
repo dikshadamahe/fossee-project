@@ -4,7 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { datasetAPI } from '../services/api';
+import { apiClient, Endpoints } from '../api/client';
 
 export default function HistoryPage() {
   const navigate = useNavigate();
@@ -20,9 +20,9 @@ export default function HistoryPage() {
   const loadDatasets = async () => {
     try {
       setLoading(true);
-      const response = await datasetAPI.list();
+      const response = await apiClient.getDatasets();
       // Backend returns paginated response: {count, results}
-      const data = response.data.results || response.data || [];
+      const data = response.results || response || [];
       setDatasets(data);
       setError(null);
     } catch (err) {
@@ -37,12 +37,13 @@ export default function HistoryPage() {
   };
 
   const handleDownload = (dataset) => {
-    window.open(datasetAPI.getReportUrl(dataset.id), '_blank');
+    const reportUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api${Endpoints.report(dataset.id)}`;
+    window.open(reportUrl, '_blank');
   };
 
   const handleDelete = async (dataset) => {
     try {
-      await datasetAPI.delete(dataset.id);
+      await apiClient.deleteDataset(dataset.id);
       setDatasets(prev => prev.filter(d => d.id !== dataset.id));
       setDeleteConfirm(null);
     } catch (err) {

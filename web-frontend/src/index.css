@@ -140,53 +140,92 @@
 
   /* -----------------------------------------------------------------
      Tables (Section 5.3)
-     - Sticky header
-     - Mono numbers
-     - Type badges
+     - Clean, modern, lightweight design
+     - Consistent spacing with rest of UI
      ----------------------------------------------------------------- */
   .data-table {
-    @apply w-full border-collapse;
-    @apply font-mono text-mono;
+    @apply w-full;
+    border-collapse: separate;
+    border-spacing: 0;
   }
 
   .data-table thead {
     @apply sticky top-0 z-10;
-    @apply bg-primary-900 text-white;
   }
 
   .data-table th {
-    @apply px-4 py-3 text-left font-semibold;
-    @apply text-small uppercase tracking-wide;
+    @apply px-4 py-3 text-left;
+    @apply text-xs font-semibold uppercase tracking-wide;
+    @apply bg-gray-100 text-text-primary;
+    @apply border-b-2 border-border;
+    @apply border-r border-gray-200;
+    vertical-align: middle;
+  }
+
+  .data-table th:last-child {
+    @apply border-r-0;
+  }
+
+  .data-table th:first-child {
+    @apply rounded-tl-lg;
+  }
+
+  .data-table th:last-child {
+    @apply rounded-tr-lg;
   }
 
   .data-table td {
-    @apply px-4 py-3 border-b border-border;
-    @apply tabular-nums;
+    @apply px-4 py-4;
+    @apply text-sm text-text-primary;
+    @apply bg-white;
+    @apply border-b border-gray-100;
+    vertical-align: middle;
+    line-height: 1.5;
   }
 
   .data-table tbody tr {
-    @apply hover:bg-bg-main transition-colors;
+    @apply transition-colors duration-100;
   }
 
-  .data-table tbody tr:nth-child(even) {
-    @apply bg-bg-main/50;
+  .data-table tbody tr:hover td {
+    @apply bg-gray-50;
+  }
+
+  .data-table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .data-table tbody tr:last-child td:first-child {
+    @apply rounded-bl-lg;
+  }
+
+  .data-table tbody tr:last-child td:last-child {
+    @apply rounded-br-lg;
   }
 
   /* Number cells - right aligned */
   .data-table td.numeric {
-    @apply text-right;
+    @apply text-right font-mono;
+  }
+
+  /* Description text - subtle, secondary */
+  .data-table td.description {
+    @apply text-text-secondary text-sm;
+    max-width: 280px;
   }
 
   /* -----------------------------------------------------------------
-     Type Badges
+     Type Badges - Subtle, pill style
      ----------------------------------------------------------------- */
   .badge {
-    @apply inline-flex items-center px-2 py-0.5;
-    @apply text-small font-medium rounded;
+    @apply inline-flex items-center;
+    @apply px-2 py-0.5;
+    @apply text-xs font-medium rounded;
+    line-height: 1.4;
   }
 
   .badge-default {
-    @apply badge bg-bg-main text-text-secondary;
+    @apply badge bg-gray-100 text-text-secondary;
   }
 
   .badge-primary {
@@ -203,6 +242,10 @@
 
   .badge-error {
     @apply badge bg-error/10 text-error;
+  }
+
+  .badge-info {
+    @apply badge bg-gray-100 text-text-secondary;
   }
 
   /* -----------------------------------------------------------------

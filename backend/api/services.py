@@ -38,7 +38,7 @@ class UploadResult(TypedDict):
     error: str | None
 
 
-# Required CSV columns
+# Required CSV columns (internal names)
 REQUIRED_COLUMNS: tuple[str, ...] = (
     'Equipment Name',
     'Type', 
@@ -47,7 +47,7 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
     'Temperature'
 )
 
-# Column name mappings for flexible parsing
+# Column name mappings for flexible parsing (all lowercase for matching)
 COLUMN_MAPPING: dict[str, str] = {
     # Equipment Name variations
     'equipment_name': 'Equipment Name',
@@ -55,25 +55,77 @@ COLUMN_MAPPING: dict[str, str] = {
     'equipmentname': 'Equipment Name',
     'name': 'Equipment Name',
     'equipment': 'Equipment Name',
+    'equip_name': 'Equipment Name',
+    'equip name': 'Equipment Name',
+    'equipname': 'Equipment Name',
+    'device': 'Equipment Name',
+    'device_name': 'Equipment Name',
+    'device name': 'Equipment Name',
+    'asset': 'Equipment Name',
+    'asset_name': 'Equipment Name',
+    'id': 'Equipment Name',
+    'equipment_id': 'Equipment Name',
+    'equip_id': 'Equipment Name',
+    
     # Type variations
     'type': 'Type',
     'equipment_type': 'Type',
     'equipment type': 'Type',
     'equipmenttype': 'Type',
     'category': 'Type',
+    'equip_type': 'Type',
+    'device_type': 'Type',
+    'asset_type': 'Type',
+    'class': 'Type',
+    'classification': 'Type',
+    'kind': 'Type',
+    
     # Flowrate variations
     'flowrate': 'Flowrate',
     'flow_rate': 'Flowrate',
     'flow rate': 'Flowrate',
+    'flow-rate': 'Flowrate',
     'flow': 'Flowrate',
+    'flowrt': 'Flowrate',
+    'flow_rt': 'Flowrate',
+    'rate': 'Flowrate',
+    'flow_speed': 'Flowrate',
+    'flowspeed': 'Flowrate',
+    'volumetric_flow': 'Flowrate',
+    'volume_flow': 'Flowrate',
+    'discharge': 'Flowrate',
+    'discharge_rate': 'Flowrate',
+    'q': 'Flowrate',  # Common engineering symbol
+    
     # Pressure variations
     'pressure': 'Pressure',
     'press': 'Pressure',
     'pres': 'Pressure',
+    'psi': 'Pressure',
+    'bar': 'Pressure',
+    'kpa': 'Pressure',
+    'mpa': 'Pressure',
+    'pressure_reading': 'Pressure',
+    'static_pressure': 'Pressure',
+    'dynamic_pressure': 'Pressure',
+    'p': 'Pressure',  # Common engineering symbol
+    'press_value': 'Pressure',
+    
     # Temperature variations
     'temperature': 'Temperature',
     'temp': 'Temperature',
     'tmp': 'Temperature',
+    'celsius': 'Temperature',
+    'fahrenheit': 'Temperature',
+    'kelvin': 'Temperature',
+    'deg': 'Temperature',
+    'degree': 'Temperature',
+    'degrees': 'Temperature',
+    'temp_reading': 'Temperature',
+    'temperature_reading': 'Temperature',
+    't': 'Temperature',  # Common engineering symbol
+    'thermal': 'Temperature',
+    'heat': 'Temperature',
 }
 
 
@@ -157,7 +209,20 @@ class CSVValidationService:
         # Check for missing columns
         missing = set(REQUIRED_COLUMNS) - found_columns
         if missing:
-            errors.append(f"Missing required columns: {', '.join(sorted(missing))}")
+            # Build helpful error message
+            actual_cols = list(df.columns)
+            
+            # Get example accepted names for each missing column
+            hints: list[str] = []
+            for m in sorted(missing):
+                examples = [k for k, v in COLUMN_MAPPING.items() if v == m][:3]
+                hints.append(f'"{m}" (accepts: {", ".join(examples)}...)')
+            
+            errors.append(
+                f"Missing {len(missing)} required column(s):\n"
+                f"  • {chr(10).join('• ' + h for h in hints)}\n"
+                f"Your CSV has these columns: {', '.join(actual_cols)}"
+            )
         
         return {'errors': errors, 'warnings': warnings}
     

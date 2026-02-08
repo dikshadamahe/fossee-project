@@ -43,7 +43,7 @@ class UploadWorker(QThread):
     
     def run(self):
         self.progress.emit(30)
-        result = self.api_client.upload_csv(self.filepath)
+        result = self.api_client.upload(self.filepath)
         self.progress.emit(100)
         self.finished.emit(result.success, result.data if result.success else {'error': result.error})
 
@@ -66,9 +66,14 @@ class UploadZone(QFrame):
         layout.setSpacing(16)
         layout.setContentsMargins(40, 40, 40, 40)
         
-        # Icon
-        self.icon_label = QLabel("📤")
-        self.icon_label.setStyleSheet("font-size: 64px; background: transparent;")
+        # Icon (using Unicode symbol instead of emoji)
+        self.icon_label = QLabel("\u2191")  # Up arrow
+        self.icon_label.setStyleSheet(f"""
+            font-size: 48px;
+            background: transparent;
+            color: {COLORS['primary-700']};
+            font-weight: bold;
+        """)
         self.icon_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.icon_label)
         
@@ -190,8 +195,13 @@ class UploadPage(QWidget):
         self.result_frame.setVisible(False)
         result_layout = QVBoxLayout(self.result_frame)
         
-        self.result_icon = QLabel("✅")
-        self.result_icon.setStyleSheet("font-size: 48px; background: transparent;")
+        self.result_icon = QLabel("\u2713")  # Checkmark
+        self.result_icon.setStyleSheet(f"""
+            font-size: 48px;
+            background: transparent;
+            color: {COLORS['success']};
+            font-weight: bold;
+        """)
         self.result_icon.setAlignment(Qt.AlignCenter)
         result_layout.addWidget(self.result_icon)
         
@@ -215,11 +225,11 @@ class UploadPage(QWidget):
         btn_row.setAlignment(Qt.AlignCenter)
         btn_row.setSpacing(12)
         
-        self.view_btn = QPushButton("📊 View Dashboard")
+        self.view_btn = QPushButton("View Dashboard")
         self.view_btn.clicked.connect(lambda: self._navigate('dashboard'))
         btn_row.addWidget(self.view_btn)
         
-        self.another_btn = QPushButton("📤 Upload Another")
+        self.another_btn = QPushButton("Upload Another")
         self.another_btn.setObjectName("SecondaryButton")
         self.another_btn.clicked.connect(self._reset)
         btn_row.addWidget(self.another_btn)
@@ -253,31 +263,31 @@ class UploadPage(QWidget):
         self._worker.start()
     
     def _on_upload_complete(self, success: bool, data: dict):
-        """Handle upload completion"""
+        """Handle upload completion - auto-navigate to dashboard on success"""
         self.progress_frame.setVisible(False)
         
         if success:
-            self.result_frame.setVisible(True)
-            self.result_icon.setText("✅")
-            self.result_title.setText("Upload Successful!")
-            self.result_title.setStyleSheet(f"""
-                font-size: 20px;
-                font-weight: 600;
-                color: {COLORS['success']};
-                background: transparent;
-            """)
-            
             summary = data.get('summary', {})
-            count = summary.get('total_count', 0)
-            self.result_details.setText(f"{count} equipment records uploaded and processed")
-            
             dataset_id = data.get('dataset_id')
+            
             if dataset_id:
+                # Store data and immediately navigate to dashboard (like web app)
                 self._last_dataset_id = dataset_id
                 self._last_summary = summary
+                # Auto-navigate to dashboard
+                self.upload_complete.emit(dataset_id, summary)
+                # Reset for next upload
+                self._reset()
         else:
+            # Show error state
             self.result_frame.setVisible(True)
-            self.result_icon.setText("❌")
+            self.result_icon.setText("\u2717")  # X mark
+            self.result_icon.setStyleSheet(f"""
+                font-size: 48px;
+                background: transparent;
+                color: {COLORS['error']};
+                font-weight: bold;
+            """)
             self.result_title.setText("Upload Failed")
             self.result_title.setStyleSheet(f"""
                 font-size: 20px;

@@ -195,19 +195,19 @@ export default function DashboardPage() {
       )}
 
       {activeTab === 'charts' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="lab-panel">
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="lab-panel p-6">
               <h3 className="font-semibold text-text-primary mb-4">Flow Rate by Equipment</h3>
               <ParameterBarChart records={records.slice(0, 15)} parameter="flowrate" />
             </div>
-            <div className="lab-panel">
+            <div className="lab-panel p-6">
               <h3 className="font-semibold text-text-primary mb-4">Pressure by Equipment</h3>
               <ParameterBarChart records={records.slice(0, 15)} parameter="pressure" />
             </div>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="lab-panel">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="lab-panel p-6">
               <h3 className="font-semibold text-text-primary mb-4">Temperature by Equipment</h3>
               <ParameterBarChart records={records.slice(0, 15)} parameter="temperature" />
             </div>
