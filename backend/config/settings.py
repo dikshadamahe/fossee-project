@@ -21,7 +21,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     # Production hosts
-    'pracheer.pythonanywhere.com',
+    'dikshadamahe.pythonanywhere.com',
     '.pythonanywhere.com',
 ]
 
@@ -114,6 +114,7 @@ CORS_ALLOWED_ORIGINS = [
     # Production - Vercel
     'https://fossee-web.vercel.app',
     'https://fossee-project.vercel.app',
+    'https://fossee-project-eta.vercel.app',
 ]
 
 # Add additional production origins from environment
@@ -145,7 +146,8 @@ CORS_ALLOW_METHODS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://fossee-web.vercel.app',
     'https://fossee-project.vercel.app',
-    'https://pracheer.pythonanywhere.com',
+    'https://fossee-project-eta.vercel.app',
+    'https://dikshadamahe.pythonanywhere.com',
 ]
 
 # =============================================================================

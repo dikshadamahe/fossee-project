@@ -17,9 +17,9 @@ A hybrid application that allows users to upload a CSV file containing chemical 
 
 | Platform | Link |
 |----------|------|
-| **Web App** | [https://fossee-web.vercel.app](https://fossee-web.vercel.app) |
-| **Backend API** | [https://pracheer.pythonanywhere.com/api/](https://pracheer.pythonanywhere.com/api/) |
-| **Desktop App** | [Download ChemViz.exe (Windows)](https://github.com/pracheersrivastava/fossee-web/releases/latest) |
+| **Web App** | [https://fossee-project-eta.vercel.app](https://fossee-project-eta.vercel.app) |
+| **Backend API** | [https://dikshadamahe.pythonanywhere.com/api/](https://dikshadamahe.pythonanywhere.com/api/) |
+| **Desktop App** | [Download ChemViz.exe (Windows)](https://github.com/dikshadamahe/fossee-project/releases/latest) |
 
 > **Quick Start:** Visit the web app, register an account, upload `sample_equipment_data.csv`, and explore the charts, summaries, and PDF export.
 
@@ -88,8 +88,8 @@ Both frontends connect to the **same Django backend API**.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/pracheersrivastava/fossee-web.git
-cd fossee-web
+git clone https://github.com/dikshadamahe/fossee-project.git
+cd fossee-project
 ```
 
 ### 2. Start the Backend (required first)
@@ -218,7 +218,7 @@ fossee-web/
 
 ## API Endpoints
 
-Base URL: **https://pracheer.pythonanywhere.com/api/** (hosted) or **http://localhost:8000/api/** (local)
+Base URL: **https://dikshadamahe.pythonanywhere.com/api/** (hosted) or **http://localhost:8000/api/** (local)
 
 ### Datasets
 
@@ -279,9 +279,9 @@ Built as part of the [FOSSEE](https://fossee.in/) initiative at the Indian Insti
 - Live at [https://fossee-web.vercel.app](https://fossee-web.vercel.app).
 
 ### Backend — PythonAnywhere
-- Django app hosted at [https://pracheer.pythonanywhere.com](https://pracheer.pythonanywhere.com).
+- Django app hosted at [https://dikshadamahe.pythonanywhere.com](https://dikshadamahe.pythonanywhere.com).
 - CORS configured to accept requests from Vercel and Desktop.
 
 ### Desktop — GitHub Releases
 - Built with **PyInstaller**.
-- Download latest `.exe` from [Releases](https://github.com/pracheersrivastava/fossee-web/releases/latest).
+- Download latest `.exe` from [Releases](https://github.com/dikshadamahe/fossee-project/releases/latest).
