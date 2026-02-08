@@ -1,0 +1,17 @@
+# Backend
+Django==5.0.1
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+pandas==2.1.4
+reportlab==4.0.8
+matplotlib==3.8.2
+Pillow==10.1.0
+
+# Desktop
+PyQt5==5.15.10
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.13.0
+
+# Common
+requests==2.31.0
+python-dotenv==1.0.0

@@ -1,0 +1,317 @@
+/**
+ * Main Stylesheet - FOSSEE Scientific Analytics UI
+ * Tailwind CSS + Custom Components from design.md
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =================================================================
+   BASE STYLES (design.md typography rules)
+   ================================================================= */
+
+@layer base {
+  /* Numbers in mono (design.md rule) */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Headings - sentence case (design.md rule) */
+  h1, h2, h3, h4, h5, h6 {
+    text-transform: none; /* Ensure sentence case */
+  }
+
+  /* Focus states - WCAG AA compliant */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(27, 127, 121, 0.3);
+    border-radius: 4px;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: rgba(27, 127, 121, 0.2);
+  }
+}
+
+/* =================================================================
+   COMPONENT STYLES (design.md Section 5)
+   ================================================================= */
+
+@layer components {
+  /* -----------------------------------------------------------------
+     Lab Panels / Cards (Section 5.1)
+     - Radius: 10px
+     - Shadow: 0 4px 12px rgba(0,0,0,0.06)
+     - Top accent 3px primary-700
+     ----------------------------------------------------------------- */
+  .lab-panel {
+    @apply bg-bg-surface rounded-card shadow-card;
+    @apply border border-border;
+    @apply relative overflow-hidden;
+  }
+
+  .lab-panel::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-[3px];
+    @apply bg-primary-700;
+  }
+
+  .lab-panel-header {
+    @apply px-6 py-4 border-b border-border;
+    @apply flex items-center justify-between;
+  }
+
+  .lab-panel-title {
+    @apply text-h3 text-text-primary font-semibold;
+  }
+
+  .lab-panel-body {
+    @apply p-6;
+  }
+
+  .lab-panel-actions {
+    @apply px-6 py-4 border-t border-border;
+    @apply flex items-center justify-end gap-3;
+  }
+
+  /* -----------------------------------------------------------------
+     Buttons (Section 5.4)
+     - Primary: bg primary-700, radius 8, height 40
+     - Secondary: outline primary-700
+     - Danger: error color
+     ----------------------------------------------------------------- */
+  .btn {
+    @apply inline-flex items-center justify-center;
+    @apply px-4 h-10 rounded-button;
+    @apply font-medium text-body;
+    @apply transition-all duration-200;
+    @apply focus-visible:shadow-focus;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-700 text-white;
+    @apply hover:bg-primary-900;
+    @apply active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply btn bg-transparent text-primary-700;
+    @apply border-2 border-primary-700;
+    @apply hover:bg-primary-700 hover:text-white;
+  }
+
+  .btn-danger {
+    @apply btn bg-error text-white;
+    @apply hover:bg-red-700;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-text-secondary;
+    @apply hover:bg-bg-main hover:text-text-primary;
+  }
+
+  /* -----------------------------------------------------------------
+     Tables (Section 5.3)
+     - Sticky header
+     - Mono numbers
+     - Type badges
+     ----------------------------------------------------------------- */
+  .data-table {
+    @apply w-full border-collapse;
+    @apply font-mono text-mono;
+  }
+
+  .data-table thead {
+    @apply sticky top-0 z-10;
+    @apply bg-primary-900 text-white;
+  }
+
+  .data-table th {
+    @apply px-4 py-3 text-left font-semibold;
+    @apply text-small uppercase tracking-wide;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 border-b border-border;
+    @apply tabular-nums;
+  }
+
+  .data-table tbody tr {
+    @apply hover:bg-bg-main transition-colors;
+  }
+
+  .data-table tbody tr:nth-child(even) {
+    @apply bg-bg-main/50;
+  }
+
+  /* Number cells - right aligned */
+  .data-table td.numeric {
+    @apply text-right;
+  }
+
+  /* -----------------------------------------------------------------
+     Type Badges
+     ----------------------------------------------------------------- */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5;
+    @apply text-small font-medium rounded;
+  }
+
+  .badge-default {
+    @apply badge bg-bg-main text-text-secondary;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-700/10 text-primary-700;
+  }
+
+  .badge-success {
+    @apply badge bg-success/10 text-success;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning/10 text-warning;
+  }
+
+  .badge-error {
+    @apply badge bg-error/10 text-error;
+  }
+
+  /* -----------------------------------------------------------------
+     CSV Upload Zone (Section 5.2)
+     - Minimum height 220px
+     - States: empty, drag-over, valid, invalid, processing
+     ----------------------------------------------------------------- */
+  .upload-zone {
+    @apply min-h-[220px] rounded-card;
+    @apply border-2 border-dashed border-border;
+    @apply flex flex-col items-center justify-center;
+    @apply p-8 text-center;
+    @apply transition-all duration-200;
+    @apply cursor-pointer;
+  }
+
+  .upload-zone:hover {
+    @apply border-primary-700 bg-primary-700/5;
+  }
+
+  .upload-zone.drag-over {
+    @apply border-primary-700 bg-primary-700/10;
+    @apply scale-[1.02];
+  }
+
+  .upload-zone.valid {
+    @apply border-success bg-success/5;
+  }
+
+  .upload-zone.invalid {
+    @apply border-error bg-error/5;
+  }
+
+  .upload-zone.processing {
+    @apply border-primary-600 bg-primary-600/5;
+    @apply pointer-events-none;
+  }
+
+  /* -----------------------------------------------------------------
+     Forms (Section 5.5)
+     - Labels top
+     - Error inline
+     - 8px gap
+     ----------------------------------------------------------------- */
+  .form-group {
+    @apply flex flex-col gap-2;
+  }
+
+  .form-label {
+    @apply text-small font-medium text-text-secondary;
+  }
+
+  .form-input {
+    @apply h-10 px-3 rounded-button;
+    @apply border border-border bg-bg-surface;
+    @apply text-body text-text-primary;
+    @apply transition-all duration-200;
+    @apply focus:border-primary-700 focus:shadow-focus;
+  }
+
+  .form-input.error {
+    @apply border-error;
+  }
+
+  .form-error {
+    @apply text-small text-error;
+  }
+
+  .form-helper {
+    @apply text-small text-text-muted;
+  }
+
+  /* -----------------------------------------------------------------
+     Summary Cards
+     ----------------------------------------------------------------- */
+  .summary-card {
+    @apply lab-panel p-4 text-center;
+  }
+
+  .summary-card-label {
+    @apply text-small text-text-secondary mb-1;
+  }
+
+  .summary-card-value {
+    @apply text-2xl font-semibold text-primary-700;
+    @apply font-mono tabular-nums;
+  }
+
+  .summary-card-unit {
+    @apply text-small text-text-muted mt-1;
+  }
+
+  /* -----------------------------------------------------------------
+     Navigation
+     ----------------------------------------------------------------- */
+  .nav-link {
+    @apply px-4 py-2 rounded-button;
+    @apply text-body text-text-secondary;
+    @apply hover:bg-bg-main hover:text-text-primary;
+    @apply transition-colors duration-200;
+  }
+
+  .nav-link.active {
+    @apply bg-primary-700/10 text-primary-700 font-medium;
+  }
+
+  /* -----------------------------------------------------------------
+     Chart Container
+     ----------------------------------------------------------------- */
+  .chart-container {
+    @apply lab-panel;
+    @apply p-6;
+    @apply min-h-[300px];
+  }
+}
+
+/* =================================================================
+   UTILITY CLASSES
+   ================================================================= */
+
+@layer utilities {
+  /* Mono numbers for data display */
+  .font-data {
+    @apply font-mono tabular-nums;
+  }
+
+  /* Card grid layouts */
+  .card-grid {
+    @apply grid gap-4;
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+
+  /* Container with max-width from design */
+  .container-main {
+    @apply max-w-container mx-auto px-4;
+  }
+}

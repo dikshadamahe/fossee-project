@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+.env.local
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Django
+*.log
+*.pot
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# Python
+*.py[cod]
+*.so
+.Python
+pip-log.txt
+
+# Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+web-frontend/dist/
+desktop-app/build/
+
+# Screenshots placeholders (keep actual PNGs)
+screenshots/*.md
