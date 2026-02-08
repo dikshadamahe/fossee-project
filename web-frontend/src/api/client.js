@@ -18,6 +18,9 @@ const CONFIG = {
   TIMEOUT: 30000, // milliseconds
 };
 
+// Token storage key
+const TOKEN_KEY = 'fossee_auth_token';
+
 // Create axios instance
 const api = axios.create({
   baseURL: `${CONFIG.BASE_URL}${CONFIG.API_PREFIX}`,
@@ -28,28 +31,118 @@ const api = axios.create({
 });
 
 // =============================================================================
+// REQUEST INTERCEPTOR - Add auth token
+// =============================================================================
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      config.headers.Authorization = `Token ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// =============================================================================
+// RESPONSE INTERCEPTOR - Handle 401 errors
+// =============================================================================
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token might be expired, clear it
+      // Note: Don't clear on login/register endpoints
+      const url = error.config.url || '';
+      if (!url.includes('/auth/')) {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem('fossee_auth_user');
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// =============================================================================
 // ENDPOINTS (Centralized - matches Python api_client.py)
 // =============================================================================
 
 export const Endpoints = {
+  // Auth endpoints
+  AUTH_REGISTER: '/auth/register/',
+  AUTH_LOGIN: '/auth/login/',
+  AUTH_LOGOUT: '/auth/logout/',
+  AUTH_USER: '/auth/user/',
+
   // POST - Upload CSV file
   UPLOAD: '/upload/',
-  
+
   // GET - List all datasets (history)
   DATASETS: '/datasets/',
-  
+
   // GET - Dataset summary statistics
   summary: (id) => `/summary/${id}/`,
-  
+
   // GET/DELETE - Single dataset with records
   dataset: (id) => `/datasets/${id}/`,
-  
+
   // GET - Download PDF report
   report: (id) => `/report/${id}/`,
 };
 
 // =============================================================================
-// API METHODS
+// AUTH API METHODS
+// =============================================================================
+
+export const authApi = {
+  /**
+   * POST /api/auth/register/
+   * Register new user
+   */
+  register: async (username, email, password, passwordConfirm) => {
+    const response = await api.post(Endpoints.AUTH_REGISTER, {
+      username,
+      email,
+      password,
+      password_confirm: passwordConfirm,
+    });
+    return response.data;
+  },
+
+  /**
+   * POST /api/auth/login/
+   * Login user
+   */
+  login: async (username, password) => {
+    const response = await api.post(Endpoints.AUTH_LOGIN, {
+      username,
+      password,
+    });
+    return response.data;
+  },
+
+  /**
+   * POST /api/auth/logout/
+   * Logout user
+   */
+  logout: async () => {
+    await api.post(Endpoints.AUTH_LOGOUT);
+  },
+
+  /**
+   * GET /api/auth/user/
+   * Get current user profile
+   */
+  getUser: async () => {
+    const response = await api.get(Endpoints.AUTH_USER);
+    return response.data;
+  },
+};
+
+// =============================================================================
+// DATA API METHODS
 // =============================================================================
 
 export const apiClient = {
@@ -66,7 +159,7 @@ export const apiClient = {
     if (filename) {
       formData.append('filename', filename);
     }
-    
+
     const response = await api.post(Endpoints.UPLOAD, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

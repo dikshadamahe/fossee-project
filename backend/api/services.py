@@ -209,8 +209,18 @@ class CSVProcessingService:
         return df
     
     @staticmethod
-    def process_file(file: UploadedFile, filename: str | None = None) -> UploadResult:
-        """Process uploaded CSV file and create dataset"""
+    def process_file(
+        file: UploadedFile, 
+        filename: str | None = None,
+        user: Any = None
+    ) -> UploadResult:
+        """Process uploaded CSV file and create dataset.
+        
+        Args:
+            file: The uploaded CSV file
+            filename: Optional custom filename
+            user: Optional user for dataset ownership (None for anonymous)
+        """
         
         # Validate first
         validation = CSVValidationService.validate_file(file)
@@ -243,11 +253,12 @@ class CSVProcessingService:
             if filename is None:
                 filename = Path(file.name or 'uploaded.csv').stem
             
-            # Create dataset
+            # Create dataset with user ownership
             dataset = Dataset.objects.create(
                 filename=filename,
                 summary_json=summary,
-                csv_file=file
+                csv_file=file,
+                user=user  # Associate with user (None for anonymous)
             )
             
             # Create equipment records

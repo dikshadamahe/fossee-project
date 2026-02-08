@@ -12,14 +12,21 @@
    ================================================================= */
 
 @layer base {
+
   /* Numbers in mono (design.md rule) */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
 
   /* Headings - sentence case (design.md rule) */
-  h1, h2, h3, h4, h5, h6 {
-    text-transform: none; /* Ensure sentence case */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-transform: none;
+    /* Ensure sentence case */
   }
 
   /* Focus states - WCAG AA compliant */
@@ -40,6 +47,7 @@
    ================================================================= */
 
 @layer components {
+
   /* -----------------------------------------------------------------
      Lab Panels / Cards (Section 5.1)
      - Radius: 10px
@@ -47,9 +55,10 @@
      - Top accent 3px primary-700
      ----------------------------------------------------------------- */
   .lab-panel {
-    @apply bg-bg-surface rounded-card shadow-card;
-    @apply border border-border;
+    @apply bg-bg-surface rounded-card;
+    @apply border-2 border-border;
     @apply relative overflow-hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
   }
 
   .lab-panel::before {
@@ -74,6 +83,22 @@
   .lab-panel-actions {
     @apply px-6 py-4 border-t border-border;
     @apply flex items-center justify-end gap-3;
+  }
+
+  /* -----------------------------------------------------------------
+     Navigation Links (Header Nav)
+     ----------------------------------------------------------------- */
+  .nav-link {
+    @apply inline-flex items-center gap-2;
+    @apply px-4 py-2 rounded-lg;
+    @apply text-sm font-medium text-white/80;
+    @apply transition-all duration-200;
+    @apply hover:bg-primary-700/50 hover:text-white;
+  }
+
+  .nav-link.active,
+  .nav-link[aria-current="page"] {
+    @apply bg-primary-700 text-white;
   }
 
   /* -----------------------------------------------------------------
@@ -299,6 +324,7 @@
    ================================================================= */
 
 @layer utilities {
+
   /* Mono numbers for data display */
   .font-data {
     @apply font-mono tabular-nums;
@@ -313,5 +339,92 @@
   /* Container with max-width from design */
   .container-main {
     @apply max-w-container mx-auto px-4;
+  }
+
+  /* -----------------------------------------------------------------
+     Auth Modal Styles
+     ----------------------------------------------------------------- */
+  .auth-modal-overlay {
+    @apply fixed inset-0 z-50;
+    @apply bg-black/50 backdrop-blur-sm;
+    @apply flex items-center justify-center;
+    @apply p-4;
+  }
+
+  .auth-modal {
+    @apply bg-bg-surface rounded-card shadow-2xl;
+    @apply w-full max-w-md;
+    @apply overflow-hidden;
+  }
+
+  .auth-modal-header {
+    @apply px-6 py-4 bg-primary-900 text-white;
+    @apply flex items-center justify-between;
+  }
+
+  .auth-modal-header h2 {
+    @apply text-lg font-semibold;
+  }
+
+  .auth-modal-close {
+    @apply text-2xl text-white/80 hover:text-white;
+    @apply transition-colors;
+  }
+
+  .auth-tabs {
+    @apply flex border-b border-border;
+  }
+
+  .auth-tab {
+    @apply flex-1 px-4 py-3;
+    @apply text-body text-text-secondary;
+    @apply hover:bg-bg-main transition-colors;
+    @apply border-b-2 border-transparent;
+  }
+
+  .auth-tab.active {
+    @apply text-primary-700 border-primary-700;
+    @apply font-medium;
+  }
+
+  .auth-error {
+    @apply mx-6 mt-4 p-3;
+    @apply bg-error/10 border border-error/20 rounded;
+    @apply text-error text-small;
+  }
+
+  .auth-form {
+    @apply p-6 space-y-4;
+  }
+
+  .auth-form .form-group {
+    @apply flex flex-col gap-1;
+  }
+
+  .auth-form .form-group label {
+    @apply text-small font-medium text-text-secondary;
+  }
+
+  .auth-form .form-group input {
+    @apply h-10 px-3 rounded-button;
+    @apply border border-border bg-bg-surface;
+    @apply text-body text-text-primary;
+    @apply transition-all duration-200;
+    @apply focus:border-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700/20;
+  }
+
+  .auth-form .form-group input:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .auth-form .field-error {
+    @apply text-error text-small;
+  }
+
+  .auth-submit {
+    @apply w-full h-10 rounded-button;
+    @apply bg-primary-700 text-white font-medium;
+    @apply hover:bg-primary-900 transition-colors;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 }

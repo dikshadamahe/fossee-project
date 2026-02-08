@@ -35,8 +35,9 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const response = await datasetAPI.list();
-      const datasets = response.data;
-      
+      // Backend returns paginated response: {count, next, previous, results}
+      const datasets = response.data.results || response.data;
+
       if (datasets && datasets.length > 0) {
         // Load the most recent one
         await loadDataset(datasets[0].id);
@@ -56,7 +57,8 @@ export default function DashboardPage() {
       const response = await datasetAPI.get(id);
       setDataset(response.data);
       setRecords(response.data.records || []);
-      setStatistics(response.data.statistics || null);
+      // Backend returns summary_json, not statistics
+      setStatistics(response.data.summary_json || null);
       setError(null);
     } catch (err) {
       setError('Failed to load dataset');
@@ -67,7 +69,7 @@ export default function DashboardPage() {
 
   const handleDownloadReport = async () => {
     if (!dataset?.id) return;
-    
+
     try {
       window.open(datasetAPI.getReportUrl(dataset.id), '_blank');
     } catch (err) {
@@ -168,11 +170,10 @@ export default function DashboardPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'bg-primary-700 text-white'
-                : 'text-text-secondary hover:bg-bg-main'
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tab.id
+              ? 'bg-primary-700 text-white'
+              : 'text-text-secondary hover:bg-bg-main'
+              }`}
           >
             {tab.label}
           </button>

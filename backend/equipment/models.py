@@ -5,15 +5,16 @@ Python 3.12 compatible with full type hints
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
 class Dataset(models.Model):
     """
     Model for storing uploaded CSV datasets.
-    Automatically maintains only the last 5 datasets.
+    Automatically maintains only the last 5 datasets per user.
     """
     
     id: int
@@ -21,6 +22,17 @@ class Dataset(models.Model):
     filename = models.CharField(max_length=255)
     summary_json = models.JSONField(default=dict, blank=True)
     csv_file = models.FileField(upload_to='datasets/', null=True, blank=True)
+    
+    # User ownership (null for anonymous uploads)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='datasets',
+        null=True,
+        blank=True,
+        help_text="Owner of this dataset. Null for anonymous uploads."
+    )
+
     
     class Meta:
         ordering = ['-uploaded_at']

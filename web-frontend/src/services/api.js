@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
     .split('; ')
     .find(row => row.startsWith('csrftoken='))
     ?.split('=')[1];
-  
+
   if (csrfToken) {
     config.headers['X-CSRFToken'] = csrfToken;
   }
@@ -25,41 +25,41 @@ api.interceptors.request.use((config) => {
 
 // Auth API
 export const authAPI = {
-  login: (username, password) => 
+  login: (username, password) =>
     api.post('/auth/login/', { username, password }),
-  
-  logout: () => 
+
+  logout: () =>
     api.post('/auth/logout/'),
-  
-  getUser: () => 
+
+  getUser: () =>
     api.get('/auth/user/'),
 };
 
 // Dataset API
 export const datasetAPI = {
-  list: () => 
+  list: () =>
     api.get('/datasets/'),
-  
-  get: (id) => 
+
+  get: (id) =>
     api.get(`/datasets/${id}/`),
-  
+
   upload: (file, name) => {
     const formData = new FormData();
     formData.append('file', file);
-    if (name) formData.append('name', name);
-    
-    return api.post('/datasets/upload/', formData, {
+    if (name) formData.append('filename', name);
+
+    return api.post('/upload/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
   },
-  
-  delete: (id) => 
+
+  delete: (id) =>
     api.delete(`/datasets/${id}/`),
-  
-  getReportUrl: (id) => 
-    `${API_BASE_URL}/datasets/${id}/report/`,
+
+  getReportUrl: (id) =>
+    `${API_BASE_URL}/report/${id}/`,
 };
 
 export default api;

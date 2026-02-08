@@ -31,9 +31,10 @@ class UploadCSVView(APIView):
     """
     POST /api/upload/
     Accept CSV file, validate columns, process with pandas, store dataset.
-    Keeps only last 5 datasets.
+    Keeps only last 5 datasets per user (or globally for anonymous).
+    Associates dataset with authenticated user if logged in.
     """
-    permission_classes = [AllowAny]  # Can add authentication if needed
+    permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
     
     def post(self, request: Request) -> Response:
@@ -52,8 +53,11 @@ class UploadCSVView(APIView):
         file = serializer.validated_data['file']
         filename = serializer.validated_data.get('filename') or None
         
+        # Get user if authenticated (for ownership)
+        user = request.user if request.user.is_authenticated else None
+        
         # Process file using service
-        result = CSVProcessingService.process_file(file, filename)
+        result = CSVProcessingService.process_file(file, filename, user=user)
         
         if not result['success']:
             return Response(
@@ -122,14 +126,21 @@ class SummaryView(APIView):
 class DatasetListView(generics.ListAPIView):
     """
     GET /api/datasets/
-    List all datasets (history), ordered by upload date.
+    List datasets (history), ordered by upload date.
+    - Authenticated users: see only their datasets
+    - Anonymous users: see all anonymous datasets
     """
     serializer_class = DatasetListSerializer
     permission_classes = [AllowAny]
     
     def get_queryset(self):
-        """Return all datasets ordered by most recent"""
-        return Dataset.objects.all().order_by('-uploaded_at')
+        """Return datasets filtered by user ownership"""
+        if self.request.user.is_authenticated:
+            # Authenticated user: return their datasets
+            return Dataset.objects.filter(user=self.request.user).order_by('-uploaded_at')
+        else:
+            # Anonymous: return datasets with no owner
+            return Dataset.objects.filter(user__isnull=True).order_by('-uploaded_at')
 
 
 class DatasetDetailView(generics.RetrieveDestroyAPIView):
@@ -177,10 +188,5 @@ class ReportView(APIView):
         # Create response
         response = HttpResponse(pdf_buffer, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{dataset.filename}_report.pdf"'
-        
-        return response
-        
-        response = HttpResponse(pdf_buffer, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{dataset.name}_report.pdf"'
         
         return response

@@ -5,8 +5,20 @@ Chemical Equipment Parameter Visualizer
 
 from django.urls import path
 from . import views
+from . import auth_views
 
 urlpatterns = [
+    # =========================================================================
+    # Authentication Endpoints
+    # =========================================================================
+    path('auth/register/', auth_views.RegisterView.as_view(), name='auth-register'),
+    path('auth/login/', auth_views.LoginView.as_view(), name='auth-login'),
+    path('auth/logout/', auth_views.LogoutView.as_view(), name='auth-logout'),
+    path('auth/user/', auth_views.UserProfileView.as_view(), name='auth-user'),
+    
+    # =========================================================================
+    # Data Endpoints
+    # =========================================================================
     # Upload endpoint
     path('upload/', views.UploadCSVView.as_view(), name='upload'),
     
@@ -19,7 +31,6 @@ urlpatterns = [
     # PDF Report
     path('report/<int:pk>/', views.ReportView.as_view(), name='report'),
     
-    # Optional: Dataset detail with records
+    # Dataset detail with records
     path('datasets/<int:pk>/', views.DatasetDetailView.as_view(), name='dataset-detail'),
 ]
-

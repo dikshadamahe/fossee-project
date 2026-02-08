@@ -3,15 +3,28 @@ Django settings for Chemical Equipment Parameter Visualizer
 FOSSEE Scientific Analytics UI
 """
 
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-fossee-chemical-equipment-visualizer-change-in-production'
+# Security settings - use environment variables in production
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-fossee-chemical-equipment-visualizer-change-in-production'
+)
 
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# Allowed hosts - extend for production
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
+
+# Add production hosts from environment
+if os.environ.get('DJANGO_ALLOWED_HOSTS'):
+    ALLOWED_HOSTS.extend(os.environ.get('DJANGO_ALLOWED_HOSTS').split(','))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Third party
     'rest_framework',
+    'rest_framework.authtoken',  # Token authentication
     'corsheaders',
     # Local apps
     'equipment',
@@ -79,31 +93,44 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings
+# =============================================================================
+# CORS Configuration
+# =============================================================================
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
 ]
+
+# Add production origins from environment (e.g., Vercel deployment)
+if os.environ.get('CORS_ALLOWED_ORIGINS'):
+    CORS_ALLOWED_ORIGINS.extend(os.environ.get('CORS_ALLOWED_ORIGINS').split(','))
 
 CORS_ALLOW_CREDENTIALS = True
 
-# REST Framework settings
+# =============================================================================
+# REST Framework Configuration
+# =============================================================================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'api.authentication.LenientTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',  # Individual views set permissions
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 }
 
-# Dataset settings
-MAX_DATASETS = 5
+# =============================================================================
+# Application Settings
+# =============================================================================
+MAX_DATASETS = 5  # Max datasets per user (or globally for anonymous)

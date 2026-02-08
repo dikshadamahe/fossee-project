@@ -21,7 +21,9 @@ export default function HistoryPage() {
     try {
       setLoading(true);
       const response = await datasetAPI.list();
-      setDatasets(response.data || []);
+      // Backend returns paginated response: {count, results}
+      const data = response.data.results || response.data || [];
+      setDatasets(data);
       setError(null);
     } catch (err) {
       setError('Failed to load datasets');
@@ -153,7 +155,7 @@ export default function HistoryPage() {
                     </div>
                   </td>
                   <td>
-                    <span className="text-text-secondary">{formatDate(dataset.created_at)}</span>
+                    <span className="text-text-secondary">{formatDate(dataset.uploaded_at)}</span>
                   </td>
                   <td>
                     <div className="flex items-center justify-end gap-2">
