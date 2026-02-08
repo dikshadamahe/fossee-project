@@ -45,12 +45,7 @@ export default function DashboardPage() {
         setError('no-data');
       }
     } catch (err) {
-      // If 401 (not logged in), just show no-data prompt instead of error
-      if (err.response?.status === 401) {
-        setError('no-data');
-      } else {
-        setError('Failed to load datasets');
-      }
+      setError('Failed to load datasets');
     } finally {
       setLoading(false);
     }

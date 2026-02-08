@@ -1,21 +1,30 @@
 /**
  * History Page - List of all uploaded datasets
  * Route: /history
+ * Requires authentication - shows login prompt for guests
  */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient, Endpoints } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
 export default function HistoryPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [datasets, setDatasets] = useState([]);
   const [error, setError] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
+    // Only load datasets if user is authenticated
+    if (!isAuthenticated) {
+      setError('login-required');
+      setLoading(false);
+      return;
+    }
     loadDatasets();
-  }, []);
+  }, [isAuthenticated]);
 
   const loadDatasets = async () => {
     try {
@@ -26,12 +35,7 @@ export default function HistoryPage() {
       setDatasets(data);
       setError(null);
     } catch (err) {
-      // Check if it's a 401 authentication error
-      if (err.response?.status === 401) {
-        setError('login-required');
-      } else {
-        setError('Failed to load datasets');
-      }
+      setError('Failed to load datasets');
     } finally {
       setLoading(false);
     }

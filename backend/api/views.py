@@ -128,19 +128,10 @@ class DatasetListView(generics.ListAPIView):
     GET /api/datasets/
     List datasets (history), ordered by upload date.
     - Authenticated users: see only their datasets
-    - Anonymous users: must log in to see history
+    - Anonymous users: see all anonymous datasets (no owner)
     """
     serializer_class = DatasetListSerializer
     permission_classes = [AllowAny]
-    
-    def get(self, request, *args, **kwargs):
-        """Override get to require authentication"""
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required', 'message': 'Please log in to view your history'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        return super().get(request, *args, **kwargs)
     
     def get_queryset(self):
         """Return datasets filtered by user ownership"""
@@ -148,8 +139,8 @@ class DatasetListView(generics.ListAPIView):
             # Authenticated user: return their datasets
             return Dataset.objects.filter(user=self.request.user).order_by('-uploaded_at')
         else:
-            # Should not reach here due to get() check, but just in case
-            return Dataset.objects.none()
+            # Anonymous: return datasets with no owner
+            return Dataset.objects.filter(user__isnull=True).order_by('-uploaded_at')
 
 
 class DatasetDetailView(generics.RetrieveDestroyAPIView):
