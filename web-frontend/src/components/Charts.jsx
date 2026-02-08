@@ -66,33 +66,33 @@ ChartJS.register(
  */
 function generateInsight(value, parameter, context = {}) {
   const { mean, min, max, total } = context;
-  
+
   if (parameter === 'count' || parameter === 'type') {
     const percentage = total ? ((value / total) * 100).toFixed(1) : 0;
     if (percentage > 30) return `This is a major category, representing ${percentage}% of all equipment`;
     if (percentage > 15) return `A significant portion at ${percentage}% of the total`;
     return `Makes up ${percentage}% of the equipment inventory`;
   }
-  
+
   if (parameter === 'flowrate') {
     if (mean && value > mean * 1.2) return `High flow rate - ${((value / mean - 1) * 100).toFixed(0)}% above average`;
     if (mean && value < mean * 0.8) return `Low flow rate - ${((1 - value / mean) * 100).toFixed(0)}% below average`;
     return `Normal flow rate within expected range`;
   }
-  
+
   if (parameter === 'pressure') {
     if (mean && value > mean * 1.15) return `Elevated pressure - monitor for potential issues`;
     if (mean && value < mean * 0.85) return `Low pressure - may indicate leaks or blockages`;
     return `Pressure within normal operating range`;
   }
-  
+
   if (parameter === 'temperature') {
     if (value > 100) return `High temperature - ensure cooling systems are active`;
     if (value > 80) return `Warm - approaching upper threshold`;
     if (value < 20) return `Cold - verify if this is expected for operation`;
     return `Temperature within safe operating range`;
   }
-  
+
   return `Value: ${typeof value === 'number' ? value.toFixed(2) : value}`;
 }
 
@@ -127,14 +127,14 @@ function getUnit(parameter) {
 export function TypeDistributionBar({ statistics, title = 'Equipment Type Distribution' }) {
   const { chartData, total } = useMemo(() => {
     if (!statistics?.type_distribution) return { chartData: null, total: 0 };
-    
+
     const entries = Object.entries(statistics.type_distribution)
       .sort((a, b) => b[1] - a[1]); // Sort by count descending
-    
+
     const labels = entries.map(([type]) => type);
     const data = entries.map(([, count]) => count);
     const total = data.reduce((sum, val) => sum + val, 0);
-    
+
     return {
       chartData: {
         labels,
@@ -182,14 +182,14 @@ export function TypeDistributionBar({ statistics, title = 'Equipment Type Distri
       x: {
         beginAtZero: true,
         grid: { color: COLORS.border, drawBorder: false },
-        ticks: { 
+        ticks: {
           font: { family: 'JetBrains Mono', size: 11 },
           color: COLORS.textMuted,
         },
       },
       y: {
         grid: { display: false },
-        ticks: { 
+        ticks: {
           font: { family: 'Inter', size: 12, weight: '500' },
           color: COLORS.textPrimary,
         },
@@ -209,7 +209,7 @@ export function TypeDistributionBar({ statistics, title = 'Equipment Type Distri
     <div className="lab-panel">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold" style={{ color: COLORS.textPrimary }}>{title}</h3>
-        <span 
+        <span
           className="text-sm font-mono px-2 py-1 rounded"
           style={{ backgroundColor: COLORS.bgMain, color: COLORS.textMuted }}
         >
@@ -233,7 +233,7 @@ export function TypeDistributionBar({ statistics, title = 'Equipment Type Distri
 export function ParameterLineChart({ records, title = 'Parameter Trends', showLegend = true }) {
   const { chartData, stats } = useMemo(() => {
     if (!records || records.length === 0) return { chartData: null, stats: {} };
-    
+
     // Calculate statistics for insights
     const calcStats = (values) => {
       const valid = values.filter(v => v != null && !isNaN(v));
@@ -256,7 +256,7 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
     };
 
     const labels = records.map((r, i) => r.equipment_name?.substring(0, 10) || `#${i + 1}`);
-    
+
     return {
       chartData: {
         labels,
@@ -346,7 +346,7 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
               if (item.dataset.label.includes('Flow')) param = 'flowrate';
               else if (item.dataset.label.includes('Pressure')) param = 'pressure';
               else if (item.dataset.label.includes('Temperature')) param = 'temperature';
-              
+
               if (param && stats[param]) {
                 const insight = generateInsight(item.raw, param, stats[param]);
                 insights.push(`  💡 ${insight}`);
@@ -360,7 +360,7 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
     scales: {
       x: {
         grid: { color: COLORS.border, drawBorder: false },
-        ticks: { 
+        ticks: {
           font: { family: 'Inter', size: 11 },
           color: COLORS.textMuted,
           maxRotation: 45,
@@ -369,7 +369,7 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
       y: {
         beginAtZero: true,
         grid: { color: COLORS.border, drawBorder: false },
-        ticks: { 
+        ticks: {
           font: { family: 'JetBrains Mono', size: 11 },
           color: COLORS.textMuted,
         },
@@ -386,7 +386,7 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
   }
 
   return (
-    <div className="lab-panel">
+    <div className="lab-panel p-6">
       <h3 className="font-semibold mb-4" style={{ color: COLORS.textPrimary }}>{title}</h3>
       <div style={{ height: '320px' }}>
         <Line data={chartData} options={options} />
@@ -405,24 +405,24 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
 function SummaryCard({ title, value, unit, icon, color, insight, trend }) {
   const trendColor = trend > 0 ? COLORS.success : trend < 0 ? COLORS.error : COLORS.textMuted;
   const trendIcon = trend > 0 ? '↑' : trend < 0 ? '↓' : '→';
-  
+
   return (
-    <div 
+    <div
       className="rounded-xl p-5 border transition-shadow hover:shadow-lg"
-      style={{ 
+      style={{
         backgroundColor: 'white',
         borderColor: COLORS.border,
       }}
     >
       <div className="flex items-start justify-between mb-3">
-        <div 
+        <div
           className="w-10 h-10 rounded-lg flex items-center justify-center"
           style={{ backgroundColor: `${color}15` }}
         >
           <span style={{ color }}>{icon}</span>
         </div>
         {trend !== undefined && (
-          <span 
+          <span
             className="text-sm font-medium flex items-center gap-1"
             style={{ color: trendColor }}
           >
@@ -430,11 +430,11 @@ function SummaryCard({ title, value, unit, icon, color, insight, trend }) {
           </span>
         )}
       </div>
-      
+
       <p className="text-sm mb-1" style={{ color: COLORS.textSecondary }}>{title}</p>
-      
+
       <div className="flex items-baseline gap-1">
-        <span 
+        <span
           className="text-2xl font-bold font-mono"
           style={{ color: COLORS.textPrimary }}
         >
@@ -444,9 +444,9 @@ function SummaryCard({ title, value, unit, icon, color, insight, trend }) {
           <span className="text-sm" style={{ color: COLORS.textMuted }}>{unit}</span>
         )}
       </div>
-      
+
       {insight && (
-        <p 
+        <p
           className="text-xs mt-2 pt-2 border-t"
           style={{ color: COLORS.textMuted, borderColor: COLORS.border }}
         >
@@ -463,9 +463,9 @@ function SummaryCard({ title, value, unit, icon, color, insight, trend }) {
 export function SummaryCardsGrid({ statistics, records }) {
   const cardData = useMemo(() => {
     if (!statistics && !records) return [];
-    
+
     const cards = [];
-    
+
     // Total Records
     const totalRecords = records?.length || statistics?.total_records || 0;
     cards.push({
@@ -474,16 +474,16 @@ export function SummaryCardsGrid({ statistics, records }) {
       unit: 'units',
       icon: '📊',
       color: COLORS.primary700,
-      insight: totalRecords > 100 
+      insight: totalRecords > 100
         ? 'Large dataset - analysis may reveal significant patterns'
-        : totalRecords > 20 
+        : totalRecords > 20
           ? 'Good sample size for reliable statistics'
           : 'Consider adding more data for better insights',
     });
 
     // Equipment Types
-    const typeCount = statistics?.type_distribution 
-      ? Object.keys(statistics.type_distribution).length 
+    const typeCount = statistics?.type_distribution
+      ? Object.keys(statistics.type_distribution).length
       : 0;
     cards.push({
       title: 'Equipment Types',
@@ -491,9 +491,9 @@ export function SummaryCardsGrid({ statistics, records }) {
       unit: 'types',
       icon: '🏭',
       color: COLORS.primary600,
-      insight: typeCount > 5 
+      insight: typeCount > 5
         ? 'Diverse equipment portfolio detected'
-        : typeCount > 2 
+        : typeCount > 2
           ? 'Moderate variety in equipment types'
           : 'Limited equipment types in this dataset',
     });
@@ -501,7 +501,7 @@ export function SummaryCardsGrid({ statistics, records }) {
     // Parameter Statistics
     if (statistics?.parameter_stats) {
       const params = statistics.parameter_stats;
-      
+
       if (params.flowrate) {
         cards.push({
           title: 'Avg Flow Rate',
@@ -512,7 +512,7 @@ export function SummaryCardsGrid({ statistics, records }) {
           insight: generateInsight(params.flowrate.mean, 'flowrate', params.flowrate),
         });
       }
-      
+
       if (params.pressure) {
         cards.push({
           title: 'Avg Pressure',
@@ -523,7 +523,7 @@ export function SummaryCardsGrid({ statistics, records }) {
           insight: generateInsight(params.pressure.mean, 'pressure', params.pressure),
         });
       }
-      
+
       if (params.temperature) {
         cards.push({
           title: 'Avg Temperature',
@@ -546,9 +546,9 @@ export function SummaryCardsGrid({ statistics, records }) {
         unit: 'records',
         icon: '⚠️',
         color: outlierCount > 0 ? COLORS.warning : COLORS.success,
-        insight: outlierCount > 5 
+        insight: outlierCount > 5
           ? 'Multiple anomalies detected - review recommended'
-          : outlierCount > 0 
+          : outlierCount > 0
             ? 'A few unusual readings found - may need investigation'
             : 'All readings within normal ranges',
       });
@@ -563,9 +563,9 @@ export function SummaryCardsGrid({ statistics, records }) {
         unit: '/ 100',
         icon: '❤️',
         color: score >= 80 ? COLORS.success : score >= 60 ? COLORS.warning : COLORS.error,
-        insight: score >= 80 
+        insight: score >= 80
           ? 'Excellent - equipment operating optimally'
-          : score >= 60 
+          : score >= 60
             ? 'Good - minor attention may be needed'
             : 'Needs attention - review equipment status',
       });
@@ -598,17 +598,17 @@ export function SummaryCardsGrid({ statistics, records }) {
 export function ParameterBarChart({ records, parameter }) {
   const chartData = useMemo(() => {
     if (!records || records.length === 0) return null;
-    
+
     const labels = records.map(r => r.equipment_name?.substring(0, 15) || 'Unknown');
     const data = records.map(r => r[parameter]);
     const mean = data.reduce((a, b) => a + b, 0) / data.length;
-    
+
     const colorMap = {
       flowrate: COLORS.flowrate,
       pressure: COLORS.pressure,
       temperature: COLORS.temperature,
     };
-    
+
     return {
       labels,
       datasets: [{
@@ -645,7 +645,7 @@ export function ParameterBarChart({ records, parameter }) {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { 
+        ticks: {
           font: { family: 'Inter', size: 11 },
           color: COLORS.textMuted,
           maxRotation: 45,
@@ -654,7 +654,7 @@ export function ParameterBarChart({ records, parameter }) {
       y: {
         beginAtZero: true,
         grid: { color: COLORS.border },
-        ticks: { 
+        ticks: {
           font: { family: 'JetBrains Mono', size: 11 },
           color: COLORS.textMuted,
         },
@@ -676,11 +676,11 @@ export function ParameterBarChart({ records, parameter }) {
 export function TypeDistributionChart({ statistics }) {
   const { chartData, total } = useMemo(() => {
     if (!statistics?.type_distribution) return { chartData: null, total: 0 };
-    
+
     const labels = Object.keys(statistics.type_distribution);
     const data = Object.values(statistics.type_distribution);
     const total = data.reduce((sum, val) => sum + val, 0);
-    
+
     return {
       chartData: {
         labels,
@@ -735,7 +735,7 @@ export function TypeDistributionChart({ statistics }) {
   }
 
   return (
-    <div style={{ height: '280px' }}>
+    <div className="lab-panel p-6" style={{ height: '320px' }}>
       <Doughnut data={chartData} options={options} />
     </div>
   );
