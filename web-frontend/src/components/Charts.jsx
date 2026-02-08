@@ -199,14 +199,14 @@ export function TypeDistributionBar({ statistics, title = 'Equipment Type Distri
 
   if (!chartData) {
     return (
-      <div className="lab-panel flex items-center justify-center h-64">
+      <div className="lab-panel flex items-center justify-center h-64 p-6">
         <p className="text-text-muted">No type distribution data available</p>
       </div>
     );
   }
 
   return (
-    <div className="lab-panel">
+    <div className="lab-panel p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold" style={{ color: COLORS.textPrimary }}>{title}</h3>
         <span
@@ -379,7 +379,7 @@ export function ParameterLineChart({ records, title = 'Parameter Trends', showLe
 
   if (!chartData) {
     return (
-      <div className="lab-panel flex items-center justify-center h-64">
+      <div className="lab-panel flex items-center justify-center h-64 p-6">
         <p className="text-text-muted">No parameter data available</p>
       </div>
     );
@@ -576,7 +576,7 @@ export function SummaryCardsGrid({ statistics, records }) {
 
   if (cardData.length === 0) {
     return (
-      <div className="lab-panel text-center py-8">
+      <div className="lab-panel text-center py-8 px-6">
         <p style={{ color: COLORS.textMuted }}>No summary data available</p>
       </div>
     );

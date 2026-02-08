@@ -91,7 +91,7 @@ export default function DashboardPage() {
   if (error === 'no-data') {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="text-center lab-panel max-w-md">
+        <div className="text-center lab-panel max-w-md p-8">
           <div className="w-16 h-16 mx-auto bg-primary-700/10 text-primary-700 rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -112,7 +112,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="text-center lab-panel max-w-md">
+        <div className="text-center lab-panel max-w-md p-8">
           <div className="w-16 h-16 mx-auto bg-error/10 text-error rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

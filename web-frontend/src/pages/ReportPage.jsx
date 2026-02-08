@@ -56,7 +56,7 @@ export default function ReportPage() {
 
   const handleDownload = async () => {
     if (!dataset?.id) return;
-    
+
     setDownloading(true);
     try {
       window.open(datasetAPI.getReportUrl(dataset.id), '_blank');
@@ -81,7 +81,7 @@ export default function ReportPage() {
   if (error === 'no-data') {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="text-center lab-panel max-w-md">
+        <div className="text-center lab-panel max-w-md p-8">
           <div className="w-16 h-16 mx-auto bg-primary-700/10 text-primary-700 rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -102,7 +102,7 @@ export default function ReportPage() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="text-center lab-panel max-w-md">
+        <div className="text-center lab-panel max-w-md p-8">
           <div className="w-16 h-16 mx-auto bg-error/10 text-error rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -133,7 +133,7 @@ export default function ReportPage() {
             {dataset?.filename} • Generated {new Date().toLocaleDateString()}
           </p>
         </div>
-        <button 
+        <button
           onClick={handleDownload}
           disabled={downloading}
           className="btn-primary disabled:opacity-60"
@@ -172,13 +172,13 @@ export default function ReportPage() {
             </h2>
             <TypeDistributionChart statistics={statistics} />
           </div>
-          
+
           {/* Parameter Statistics */}
           <div>
             <h2 className="font-serif text-lg font-semibold text-text-primary mb-4 pb-2 border-b border-border">
               Parameter Statistics
             </h2>
-            <div className="lab-panel">
+            <div className="lab-panel p-4">
               <table className="data-table text-sm">
                 <thead>
                   <tr>
@@ -219,7 +219,7 @@ export default function ReportPage() {
             <h2 className="font-serif text-lg font-semibold text-text-primary mb-4 pb-2 border-b border-border">
               Outlier Analysis
             </h2>
-            <div className="lab-panel">
+            <div className="lab-panel p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {Object.entries(statistics.outliers).map(([param, indices]) => (
                   <div key={param} className="p-4 bg-bg-main rounded-lg">
