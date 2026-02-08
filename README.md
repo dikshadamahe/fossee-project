@@ -1,6 +1,6 @@
 # Chemical Equipment Parameter Visualizer
 
-**Hybrid Web + Desktop Application** | FOSSEE Intern Screening Task
+**Hybrid Web + Desktop Application** 
 
 A hybrid application that allows users to upload CSV files containing chemical equipment parameters (Equipment Name, Type, Flowrate, Pressure, Temperature), parse and analyze data via a Django REST backend, and visualize results through both a React Web frontend and a PyQt5 Desktop application.
 
