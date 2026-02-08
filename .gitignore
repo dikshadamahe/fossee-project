@@ -50,3 +50,6 @@ desktop-app/build/
 
 # Screenshots placeholders (keep actual PNGs)
 screenshots/*.md
+
+# Batch scripts
+*.bat
