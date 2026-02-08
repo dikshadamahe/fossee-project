@@ -20,6 +20,9 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    # Production hosts
+    'pracheer.pythonanywhere.com',
+    '.pythonanywhere.com',
 ]
 
 # Add production hosts from environment
@@ -103,17 +106,47 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS Configuration
 # =============================================================================
 CORS_ALLOWED_ORIGINS = [
+    # Local development
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    # Production - Vercel
+    'https://fossee-web.vercel.app',
+    'https://fossee-project.vercel.app',
 ]
 
-# Add production origins from environment (e.g., Vercel deployment)
+# Add additional production origins from environment
 if os.environ.get('CORS_ALLOWED_ORIGINS'):
     CORS_ALLOWED_ORIGINS.extend(os.environ.get('CORS_ALLOWED_ORIGINS').split(','))
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# CSRF Trusted Origins (for Django 4.0+)
+CSRF_TRUSTED_ORIGINS = [
+    'https://fossee-web.vercel.app',
+    'https://fossee-project.vercel.app',
+    'https://pracheer.pythonanywhere.com',
+]
 
 # =============================================================================
 # REST Framework Configuration
