@@ -12,8 +12,18 @@ const api = axios.create({
   },
 });
 
-// Add CSRF token to requests
+// Token storage key (must match api/client.js)
+const TOKEN_KEY = 'fossee_auth_token';
+
+// Add auth token and CSRF token to requests
 api.interceptors.request.use((config) => {
+  // Add auth token if available
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token) {
+    config.headers.Authorization = `Token ${token}`;
+  }
+
+  // Add CSRF token for POST/PUT/DELETE requests
   const csrfToken = document.cookie
     .split('; ')
     .find(row => row.startsWith('csrftoken='))
