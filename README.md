@@ -17,7 +17,7 @@ A hybrid application that allows users to upload CSV files containing chemical e
 | Platform | Link |
 |----------|------|
 | **Web App** | [https://fossee-project-eta.vercel.app](https://fossee-project-eta.vercel.app) |
-| **Backend API** | [https://dikshadamahe.pythonanywhere.com/api/](https://dikshadamahe.pythonanywhere.com/api/) |
+| **Backend API** | [https://fossee-project-api.vercel.app/api/](https://fossee-project-api.vercel.app/api/) |
 | **Desktop App** | [Download Windows EXE](https://github.com/dikshadamahe/fossee-project/releases/latest) |
 
 **Quick Start:**
@@ -62,7 +62,7 @@ A hybrid application that allows users to upload CSV files containing chemical e
 +------------------+                +----------------------+
 |  React Web App   |<-- REST API -->|                      |
 |  (Vercel)        |                |   Django Backend     |
-+------------------+                |   (PythonAnywhere)   |
++------------------+                |   (Vercel)           |
                                     |                      |
 +------------------+                |  - SQLite Database   |
 |  PyQt5 Desktop   |<-- REST API -->|  - Pandas Analytics  |
@@ -117,7 +117,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-The desktop app connects to the hosted backend at `https://dikshadamahe.pythonanywhere.com/api/` by default. No local backend setup is required.
+The desktop app connects to the hosted backend at `https://fossee-project-api.vercel.app/api/` by default. No local backend setup is required.
 
 ### 5. Build Desktop EXE
 ```bash
@@ -168,7 +168,7 @@ fossee-project/
 
 ## API Endpoints
 
-Base URL: `https://dikshadamahe.pythonanywhere.com/api/`
+Base URL: `https://fossee-project-api.vercel.app/api/`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -202,7 +202,7 @@ The `sample_equipment_data.csv` contains 25 records:
 | Component | Platform | URL |
 |-----------|----------|-----|
 | Web Frontend | Vercel | [https://fossee-project-eta.vercel.app](https://fossee-project-eta.vercel.app) |
-| Backend API | PythonAnywhere | [https://dikshadamahe.pythonanywhere.com/api/](https://dikshadamahe.pythonanywhere.com/api/) |
+| Backend API | Vercel | [https://fossee-project-api.vercel.app/api/](https://fossee-project-api.vercel.app/api/) |
 | Desktop App | GitHub Releases | [Download Windows EXE](https://github.com/dikshadamahe/fossee-project/releases/latest) |
 
 ---

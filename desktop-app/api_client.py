@@ -20,7 +20,7 @@ from io import BytesIO
 
 class Config:
     """API Configuration - centralized settings"""
-    BASE_URL = "https://dikshadamahe.pythonanywhere.com"
+    BASE_URL = "https://fossee-project-api.vercel.app"
     API_PREFIX = "/api"
     TIMEOUT = 30  # seconds
 
@@ -331,7 +331,7 @@ class APIClient:
 _client: Optional[APIClient] = None
 
 
-def get_client(base_url: str = "https://dikshadamahe.pythonanywhere.com") -> APIClient:
+def get_client(base_url: str = "https://fossee-project-api.vercel.app") -> APIClient:
     """Get or create API client singleton"""
     global _client
     if _client is None:

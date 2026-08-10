@@ -402,7 +402,7 @@ def main():
     app.setStyleSheet(get_stylesheet())
     
     # Create API client
-    api_client = get_client("https://dikshadamahe.pythonanywhere.com")
+    api_client = get_client("https://fossee-project-api.vercel.app")
     
     # Create and show main window
     window = MainWindow(api_client)

@@ -17,17 +17,9 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
 # Allowed hosts - extend for production
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    # Production hosts
-    'dikshadamahe.pythonanywhere.com',
-    '.pythonanywhere.com',
-]
-
-# Add production hosts from environment
-if os.environ.get('DJANGO_ALLOWED_HOSTS'):
-    ALLOWED_HOSTS.extend(os.environ.get('DJANGO_ALLOWED_HOSTS').split(','))
+_default_hosts = 'localhost,127.0.0.1,fossee-project-api.vercel.app'
+_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', _default_hosts)
+ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(',') if host.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,6 +40,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,6 +76,13 @@ DATABASES = {
     }
 }
 
+# Vercel serverless has ephemeral filesystem; use /tmp for SQLite
+if os.environ.get('VERCEL'):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/tmp/db.sqlite3',
+    }
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -95,31 +95,43 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-MEDIA_URL = 'media/'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Vercel serverless filesystem is read-only except /tmp
+if os.environ.get('VERCEL'):
+    MEDIA_ROOT = Path('/tmp/media')
+    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # =============================================================================
 # CORS Configuration
 # =============================================================================
+_default_cors_origins = (
+    'http://localhost:3000,'
+    'http://127.0.0.1:3000,'
+    'http://localhost:5173,'
+    'http://127.0.0.1:5173,'
+    'https://fossee-project.vercel.app,'
+    'https://fossee-project-eta.vercel.app,'
+    'https://fossee-project-api.vercel.app'
+)
+_cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', _default_cors_origins)
 CORS_ALLOWED_ORIGINS = [
-    # Local development
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    # Production - Vercel
-    'https://fossee-web.vercel.app',
-    'https://fossee-project.vercel.app',
-    'https://fossee-project-eta.vercel.app',
+    origin.strip() for origin in _cors_origins.split(',') if origin.strip()
 ]
-
-# Add additional production origins from environment
-if os.environ.get('CORS_ALLOWED_ORIGINS'):
-    CORS_ALLOWED_ORIGINS.extend(os.environ.get('CORS_ALLOWED_ORIGINS').split(','))
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -144,10 +156,9 @@ CORS_ALLOW_METHODS = [
 
 # CSRF Trusted Origins (for Django 4.0+)
 CSRF_TRUSTED_ORIGINS = [
-    'https://fossee-web.vercel.app',
     'https://fossee-project.vercel.app',
     'https://fossee-project-eta.vercel.app',
-    'https://dikshadamahe.pythonanywhere.com',
+    'https://fossee-project-api.vercel.app',
 ]
 
 # =============================================================================
@@ -169,3 +180,13 @@ REST_FRAMEWORK = {
 # Application Settings
 # =============================================================================
 MAX_DATASETS = 5  # Max datasets per user (or globally for anonymous)
+
+# Max upload size: 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
+
+# Production security
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

@@ -8,6 +8,9 @@ from . import views
 from . import auth_views
 
 urlpatterns = [
+    # Health check
+    path('', views.APIHealthView.as_view(), name='api-health'),
+
     # =========================================================================
     # Authentication Endpoints
     # =========================================================================

@@ -27,6 +27,19 @@ from .services import CSVProcessingService, StatisticsService
 from .pdf_generator import generate_pdf_report
 
 
+class APIHealthView(APIView):
+    """GET /api/ - Health check and welcome payload"""
+
+    permission_classes = [AllowAny]
+
+    def get(self, request: Request) -> Response:
+        return Response({
+            'status': 'ok',
+            'service': 'Chemical Equipment Parameter Visualizer API',
+            'version': '1.0.0',
+        })
+
+
 class UploadCSVView(APIView):
     """
     POST /api/upload/
