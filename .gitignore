@@ -63,4 +63,6 @@ full-deploy-*
 mcp-deploy-*
 stdout-deploy.json
 _invoke_mcp_deploy.py
+_invoke_args_compact.json
+_mcp_*
 .mcp-deploy-ready.txt
