@@ -53,3 +53,14 @@ screenshots/*.md
 
 # Batch scripts
 *.bat
+
+# Deploy tooling artifacts
+.deploy-*
+_deploy*
+_vercel_deploy/
+deploy-backend-files*.json
+full-deploy-*
+mcp-deploy-*
+stdout-deploy.json
+_invoke_mcp_deploy.py
+.mcp-deploy-ready.txt
