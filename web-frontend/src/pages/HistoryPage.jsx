@@ -46,7 +46,7 @@ export default function HistoryPage() {
   };
 
   const handleDownload = (dataset) => {
-    const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://fossee-project-api.vercel.app' : 'http://localhost:8000');
+    const apiBase = import.meta.env.PROD ? 'https://fossee-project-api.vercel.app' : (import.meta.env.VITE_API_URL || 'http://localhost:8000');
     const reportUrl = `${apiBase}/api${Endpoints.report(dataset.id)}`;
     window.open(reportUrl, '_blank');
   };

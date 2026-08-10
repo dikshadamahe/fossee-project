@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 // Always append /api to the base URL
-// Production API on Vercel; local dev uses localhost
 const PRODUCTION_API_URL = 'https://fossee-project-api.vercel.app';
-const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? PRODUCTION_API_URL : 'http://localhost:8000');
+const BASE_URL = import.meta.env.PROD ? PRODUCTION_API_URL : (import.meta.env.VITE_API_URL || 'http://localhost:8000');
 const API_BASE_URL = `${BASE_URL}/api`;
 
 const api = axios.create({

@@ -14,7 +14,7 @@ import axios from 'axios';
 
 const PRODUCTION_API_URL = 'https://fossee-project-api.vercel.app';
 const CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? PRODUCTION_API_URL : 'http://localhost:8000'),
+  BASE_URL: import.meta.env.PROD ? PRODUCTION_API_URL : (import.meta.env.VITE_API_URL || 'http://localhost:8000'),
   API_PREFIX: '/api',
   TIMEOUT: 30000, // milliseconds
 };
